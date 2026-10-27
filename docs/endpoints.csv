@@ -1,0 +1,221 @@
+method,path,roles,summary
+GET,/sanctum/csrf-cookie,public,Initialize CSRF cookies
+POST,/api/v1/auth/login,public,Login
+GET,/api/v1/auth/me,staff,Me
+POST,/api/v1/auth/logout,staff,Logout
+PUT,/api/v1/auth/password,staff,Password
+POST,/api/v1/auth/forgot-password,public,Forgot Password
+POST,/api/v1/auth/reset-password,public,Reset Password
+GET,/api/v1/home,public,Read home
+GET,/api/v1/navigation,public,Read navigation
+GET,/api/v1/settings,public,Read settings
+GET,/api/v1/search,public,Read search
+GET,/api/v1/redirects/resolve,public,Read redirects/resolve
+GET,/api/v1/seo/sitemap,public,Sitemap entries for Next.js metadata route
+GET,/api/v1/media/{id},public,Download published file or authorized private preview
+POST,/api/v1/contact,public,Submit private contact message
+POST,/api/v1/tariffs/calculate,public,Calculate configurable tariff estimate in integer rials
+GET,/api/v1/posts,public,List published/active posts
+GET,/api/v1/posts/{key},public,Read posts by numeric ID or slug
+GET,/api/v1/admin/posts,super_admin|relations_manager|editor,List manageable posts
+POST,/api/v1/admin/posts,super_admin|relations_manager|editor,Create posts
+GET,/api/v1/admin/posts/{id},super_admin|relations_manager|editor,Read administrative posts
+PATCH,/api/v1/admin/posts/{id},super_admin|relations_manager|editor,Update posts
+PUT,/api/v1/admin/posts/{id},super_admin|relations_manager|editor,Update posts
+DELETE,/api/v1/admin/posts/{id},super_admin|relations_manager|editor,Soft-delete posts
+POST,/api/v1/admin/posts/{id}/restore,super_admin|relations_manager,Restore posts (published content becomes draft)
+GET,/api/v1/categories,public,List published/active categories
+GET,/api/v1/categories/{key},public,Read categories by numeric ID or slug
+GET,/api/v1/admin/categories,super_admin|relations_manager,List manageable categories
+POST,/api/v1/admin/categories,super_admin|relations_manager,Create categories
+GET,/api/v1/admin/categories/{id},super_admin|relations_manager,Read administrative categories
+PATCH,/api/v1/admin/categories/{id},super_admin|relations_manager,Update categories
+PUT,/api/v1/admin/categories/{id},super_admin|relations_manager,Update categories
+DELETE,/api/v1/admin/categories/{id},super_admin|relations_manager,Soft-delete categories
+POST,/api/v1/admin/categories/{id}/restore,super_admin|relations_manager,Restore categories (published content becomes draft)
+GET,/api/v1/tags,public,List published/active tags
+GET,/api/v1/tags/{key},public,Read tags by numeric ID or slug
+GET,/api/v1/admin/tags,super_admin|relations_manager,List manageable tags
+POST,/api/v1/admin/tags,super_admin|relations_manager,Create tags
+GET,/api/v1/admin/tags/{id},super_admin|relations_manager,Read administrative tags
+PATCH,/api/v1/admin/tags/{id},super_admin|relations_manager,Update tags
+PUT,/api/v1/admin/tags/{id},super_admin|relations_manager,Update tags
+DELETE,/api/v1/admin/tags/{id},super_admin|relations_manager,Soft-delete tags
+POST,/api/v1/admin/tags/{id}/restore,super_admin|relations_manager,Restore tags (published content becomes draft)
+GET,/api/v1/pages,public,List published/active pages
+GET,/api/v1/pages/{key},public,Read pages by numeric ID or slug
+GET,/api/v1/admin/pages,super_admin|relations_manager,List manageable pages
+POST,/api/v1/admin/pages,super_admin|relations_manager,Create pages
+GET,/api/v1/admin/pages/{id},super_admin|relations_manager,Read administrative pages
+PATCH,/api/v1/admin/pages/{id},super_admin|relations_manager,Update pages
+PUT,/api/v1/admin/pages/{id},super_admin|relations_manager,Update pages
+DELETE,/api/v1/admin/pages/{id},super_admin|relations_manager,Soft-delete pages
+POST,/api/v1/admin/pages/{id}/restore,super_admin|relations_manager,Restore pages (published content becomes draft)
+GET,/api/v1/documents,public,List published/active documents
+GET,/api/v1/documents/{key},public,Read documents by numeric ID or slug
+GET,/api/v1/admin/documents,super_admin|relations_manager,List manageable documents
+POST,/api/v1/admin/documents,super_admin|relations_manager,Create documents
+GET,/api/v1/admin/documents/{id},super_admin|relations_manager,Read administrative documents
+PATCH,/api/v1/admin/documents/{id},super_admin|relations_manager,Update documents
+PUT,/api/v1/admin/documents/{id},super_admin|relations_manager,Update documents
+DELETE,/api/v1/admin/documents/{id},super_admin|relations_manager,Soft-delete documents
+POST,/api/v1/admin/documents/{id}/restore,super_admin|relations_manager,Restore documents (published content becomes draft)
+GET,/api/v1/expert-groups,public,List published/active expert-groups
+GET,/api/v1/expert-groups/{key},public,Read expert-groups by numeric ID or slug
+GET,/api/v1/admin/expert-groups,super_admin|relations_manager,List manageable expert-groups
+POST,/api/v1/admin/expert-groups,super_admin|relations_manager,Create expert-groups
+GET,/api/v1/admin/expert-groups/{id},super_admin|relations_manager,Read administrative expert-groups
+PATCH,/api/v1/admin/expert-groups/{id},super_admin|relations_manager,Update expert-groups
+PUT,/api/v1/admin/expert-groups/{id},super_admin|relations_manager,Update expert-groups
+DELETE,/api/v1/admin/expert-groups/{id},super_admin|relations_manager,Soft-delete expert-groups
+POST,/api/v1/admin/expert-groups/{id}/restore,super_admin|relations_manager,Restore expert-groups (published content becomes draft)
+GET,/api/v1/disciplines,public,List published/active disciplines
+GET,/api/v1/disciplines/{key},public,Read disciplines by numeric ID or slug
+GET,/api/v1/admin/disciplines,super_admin|relations_manager,List manageable disciplines
+POST,/api/v1/admin/disciplines,super_admin|relations_manager,Create disciplines
+GET,/api/v1/admin/disciplines/{id},super_admin|relations_manager,Read administrative disciplines
+PATCH,/api/v1/admin/disciplines/{id},super_admin|relations_manager,Update disciplines
+PUT,/api/v1/admin/disciplines/{id},super_admin|relations_manager,Update disciplines
+DELETE,/api/v1/admin/disciplines/{id},super_admin|relations_manager,Soft-delete disciplines
+POST,/api/v1/admin/disciplines/{id}/restore,super_admin|relations_manager,Restore disciplines (published content becomes draft)
+GET,/api/v1/qualifications,public,List published/active qualifications
+GET,/api/v1/qualifications/{key},public,Read qualifications by numeric ID or slug
+GET,/api/v1/admin/qualifications,super_admin|relations_manager,List manageable qualifications
+POST,/api/v1/admin/qualifications,super_admin|relations_manager,Create qualifications
+GET,/api/v1/admin/qualifications/{id},super_admin|relations_manager,Read administrative qualifications
+PATCH,/api/v1/admin/qualifications/{id},super_admin|relations_manager,Update qualifications
+PUT,/api/v1/admin/qualifications/{id},super_admin|relations_manager,Update qualifications
+DELETE,/api/v1/admin/qualifications/{id},super_admin|relations_manager,Soft-delete qualifications
+POST,/api/v1/admin/qualifications/{id}/restore,super_admin|relations_manager,Restore qualifications (published content becomes draft)
+GET,/api/v1/experts,public,List published/active experts
+GET,/api/v1/experts/{key},public,Read experts by numeric ID or slug
+GET,/api/v1/admin/experts,super_admin|relations_manager,List manageable experts
+POST,/api/v1/admin/experts,super_admin|relations_manager,Create experts
+GET,/api/v1/admin/experts/{id},super_admin|relations_manager,Read administrative experts
+PATCH,/api/v1/admin/experts/{id},super_admin|relations_manager,Update experts
+PUT,/api/v1/admin/experts/{id},super_admin|relations_manager,Update experts
+DELETE,/api/v1/admin/experts/{id},super_admin|relations_manager,Soft-delete experts
+POST,/api/v1/admin/experts/{id}/restore,super_admin|relations_manager,Restore experts (published content becomes draft)
+GET,/api/v1/board-terms,public,List published/active board-terms
+GET,/api/v1/board-terms/{key},public,Read board-terms by numeric ID or slug
+GET,/api/v1/admin/board-terms,super_admin|relations_manager,List manageable board-terms
+POST,/api/v1/admin/board-terms,super_admin|relations_manager,Create board-terms
+GET,/api/v1/admin/board-terms/{id},super_admin|relations_manager,Read administrative board-terms
+PATCH,/api/v1/admin/board-terms/{id},super_admin|relations_manager,Update board-terms
+PUT,/api/v1/admin/board-terms/{id},super_admin|relations_manager,Update board-terms
+DELETE,/api/v1/admin/board-terms/{id},super_admin|relations_manager,Soft-delete board-terms
+POST,/api/v1/admin/board-terms/{id}/restore,super_admin|relations_manager,Restore board-terms (published content becomes draft)
+GET,/api/v1/board-members,public,List published/active board-members
+GET,/api/v1/board-members/{key},public,Read board-members by numeric ID or slug
+GET,/api/v1/admin/board-members,super_admin|relations_manager,List manageable board-members
+POST,/api/v1/admin/board-members,super_admin|relations_manager,Create board-members
+GET,/api/v1/admin/board-members/{id},super_admin|relations_manager,Read administrative board-members
+PATCH,/api/v1/admin/board-members/{id},super_admin|relations_manager,Update board-members
+PUT,/api/v1/admin/board-members/{id},super_admin|relations_manager,Update board-members
+DELETE,/api/v1/admin/board-members/{id},super_admin|relations_manager,Soft-delete board-members
+POST,/api/v1/admin/board-members/{id}/restore,super_admin|relations_manager,Restore board-members (published content becomes draft)
+GET,/api/v1/agreements,public,List published/active agreements
+GET,/api/v1/agreements/{key},public,Read agreements by numeric ID or slug
+GET,/api/v1/admin/agreements,super_admin|relations_manager,List manageable agreements
+POST,/api/v1/admin/agreements,super_admin|relations_manager,Create agreements
+GET,/api/v1/admin/agreements/{id},super_admin|relations_manager,Read administrative agreements
+PATCH,/api/v1/admin/agreements/{id},super_admin|relations_manager,Update agreements
+PUT,/api/v1/admin/agreements/{id},super_admin|relations_manager,Update agreements
+DELETE,/api/v1/admin/agreements/{id},super_admin|relations_manager,Soft-delete agreements
+POST,/api/v1/admin/agreements/{id}/restore,super_admin|relations_manager,Restore agreements (published content becomes draft)
+GET,/api/v1/albums,public,List published/active albums
+GET,/api/v1/albums/{key},public,Read albums by numeric ID or slug
+GET,/api/v1/admin/albums,super_admin|relations_manager,List manageable albums
+POST,/api/v1/admin/albums,super_admin|relations_manager,Create albums
+GET,/api/v1/admin/albums/{id},super_admin|relations_manager,Read administrative albums
+PATCH,/api/v1/admin/albums/{id},super_admin|relations_manager,Update albums
+PUT,/api/v1/admin/albums/{id},super_admin|relations_manager,Update albums
+DELETE,/api/v1/admin/albums/{id},super_admin|relations_manager,Soft-delete albums
+POST,/api/v1/admin/albums/{id}/restore,super_admin|relations_manager,Restore albums (published content becomes draft)
+GET,/api/v1/events,public,List published/active events
+GET,/api/v1/events/{key},public,Read events by numeric ID or slug
+GET,/api/v1/admin/events,super_admin|relations_manager,List manageable events
+POST,/api/v1/admin/events,super_admin|relations_manager,Create events
+GET,/api/v1/admin/events/{id},super_admin|relations_manager,Read administrative events
+PATCH,/api/v1/admin/events/{id},super_admin|relations_manager,Update events
+PUT,/api/v1/admin/events/{id},super_admin|relations_manager,Update events
+DELETE,/api/v1/admin/events/{id},super_admin|relations_manager,Soft-delete events
+POST,/api/v1/admin/events/{id}/restore,super_admin|relations_manager,Restore events (published content becomes draft)
+GET,/api/v1/faqs,public,List published/active faqs
+GET,/api/v1/faqs/{key},public,Read faqs by numeric ID or slug
+GET,/api/v1/admin/faqs,super_admin|relations_manager,List manageable faqs
+POST,/api/v1/admin/faqs,super_admin|relations_manager,Create faqs
+GET,/api/v1/admin/faqs/{id},super_admin|relations_manager,Read administrative faqs
+PATCH,/api/v1/admin/faqs/{id},super_admin|relations_manager,Update faqs
+PUT,/api/v1/admin/faqs/{id},super_admin|relations_manager,Update faqs
+DELETE,/api/v1/admin/faqs/{id},super_admin|relations_manager,Soft-delete faqs
+POST,/api/v1/admin/faqs/{id}/restore,super_admin|relations_manager,Restore faqs (published content becomes draft)
+GET,/api/v1/slides,public,List published/active slides
+GET,/api/v1/slides/{key},public,Read slides by numeric ID or slug
+GET,/api/v1/admin/slides,super_admin|relations_manager,List manageable slides
+POST,/api/v1/admin/slides,super_admin|relations_manager,Create slides
+GET,/api/v1/admin/slides/{id},super_admin|relations_manager,Read administrative slides
+PATCH,/api/v1/admin/slides/{id},super_admin|relations_manager,Update slides
+PUT,/api/v1/admin/slides/{id},super_admin|relations_manager,Update slides
+DELETE,/api/v1/admin/slides/{id},super_admin|relations_manager,Soft-delete slides
+POST,/api/v1/admin/slides/{id}/restore,super_admin|relations_manager,Restore slides (published content becomes draft)
+GET,/api/v1/links,public,List published/active links
+GET,/api/v1/links/{key},public,Read links by numeric ID or slug
+GET,/api/v1/admin/links,super_admin|relations_manager,List manageable links
+POST,/api/v1/admin/links,super_admin|relations_manager,Create links
+GET,/api/v1/admin/links/{id},super_admin|relations_manager,Read administrative links
+PATCH,/api/v1/admin/links/{id},super_admin|relations_manager,Update links
+PUT,/api/v1/admin/links/{id},super_admin|relations_manager,Update links
+DELETE,/api/v1/admin/links/{id},super_admin|relations_manager,Soft-delete links
+POST,/api/v1/admin/links/{id}/restore,super_admin|relations_manager,Restore links (published content becomes draft)
+GET,/api/v1/admin/menu-items,super_admin|relations_manager,List manageable menu-items
+POST,/api/v1/admin/menu-items,super_admin|relations_manager,Create menu-items
+GET,/api/v1/admin/menu-items/{id},super_admin|relations_manager,Read administrative menu-items
+PATCH,/api/v1/admin/menu-items/{id},super_admin|relations_manager,Update menu-items
+PUT,/api/v1/admin/menu-items/{id},super_admin|relations_manager,Update menu-items
+DELETE,/api/v1/admin/menu-items/{id},super_admin|relations_manager,Soft-delete menu-items
+POST,/api/v1/admin/menu-items/{id}/restore,super_admin|relations_manager,Restore menu-items (published content becomes draft)
+GET,/api/v1/bank-accounts,public,List published/active bank-accounts
+GET,/api/v1/bank-accounts/{key},public,Read bank-accounts by numeric ID or slug
+GET,/api/v1/admin/bank-accounts,super_admin|relations_manager,List manageable bank-accounts
+POST,/api/v1/admin/bank-accounts,super_admin|relations_manager,Create bank-accounts
+GET,/api/v1/admin/bank-accounts/{id},super_admin|relations_manager,Read administrative bank-accounts
+PATCH,/api/v1/admin/bank-accounts/{id},super_admin|relations_manager,Update bank-accounts
+PUT,/api/v1/admin/bank-accounts/{id},super_admin|relations_manager,Update bank-accounts
+DELETE,/api/v1/admin/bank-accounts/{id},super_admin|relations_manager,Soft-delete bank-accounts
+POST,/api/v1/admin/bank-accounts/{id}/restore,super_admin|relations_manager,Restore bank-accounts (published content becomes draft)
+GET,/api/v1/tariffs,public,List published/active tariffs
+GET,/api/v1/tariffs/{key},public,Read tariffs by numeric ID or slug
+GET,/api/v1/admin/tariffs,super_admin|relations_manager,List manageable tariffs
+POST,/api/v1/admin/tariffs,super_admin|relations_manager,Create tariffs
+GET,/api/v1/admin/tariffs/{id},super_admin|relations_manager,Read administrative tariffs
+PATCH,/api/v1/admin/tariffs/{id},super_admin|relations_manager,Update tariffs
+PUT,/api/v1/admin/tariffs/{id},super_admin|relations_manager,Update tariffs
+DELETE,/api/v1/admin/tariffs/{id},super_admin|relations_manager,Soft-delete tariffs
+POST,/api/v1/admin/tariffs/{id}/restore,super_admin|relations_manager,Restore tariffs (published content becomes draft)
+GET,/api/v1/admin/redirects,super_admin|relations_manager,List manageable redirects
+POST,/api/v1/admin/redirects,super_admin|relations_manager,Create redirects
+GET,/api/v1/admin/redirects/{id},super_admin|relations_manager,Read administrative redirects
+PATCH,/api/v1/admin/redirects/{id},super_admin|relations_manager,Update redirects
+PUT,/api/v1/admin/redirects/{id},super_admin|relations_manager,Update redirects
+DELETE,/api/v1/admin/redirects/{id},super_admin|relations_manager,Soft-delete redirects
+POST,/api/v1/admin/redirects/{id}/restore,super_admin|relations_manager,Restore redirects (published content becomes draft)
+GET,/api/v1/admin/posts/{id}/revisions,staff,Post revision history
+GET,/api/v1/admin/dashboard,staff,Staff dashboard
+GET,/api/v1/admin/audit-logs,super_admin|relations_manager,Audit trail without password or IP values
+GET,/api/v1/admin/media,staff,List staff-accessible media
+POST,/api/v1/admin/media,staff,Upload and inspect private media
+DELETE,/api/v1/admin/media/{id},staff,Delete unreferenced media record
+PUT,/api/v1/admin/albums/{id}/items,super_admin|relations_manager,Atomically replace album items
+GET,/api/v1/admin/settings,super_admin|relations_manager,Read whitelisted site settings
+PUT,/api/v1/admin/settings,super_admin|relations_manager,Update whitelisted site settings
+GET,/api/v1/admin/users,super_admin,List users
+GET,/api/v1/admin/users/{id},super_admin,Read users
+PATCH,/api/v1/admin/users/{id},super_admin,Update users
+PUT,/api/v1/admin/users/{id},super_admin,Update users
+POST,/api/v1/admin/users,super_admin,Create invited public relations staff account
+GET,/api/v1/admin/contact-messages,super_admin|relations_manager,List contact-messages
+GET,/api/v1/admin/contact-messages/{id},super_admin|relations_manager,Read contact-messages
+PATCH,/api/v1/admin/contact-messages/{id},super_admin|relations_manager,Update contact-messages
+PUT,/api/v1/admin/contact-messages/{id},super_admin|relations_manager,Update contact-messages
+DELETE,/api/v1/admin/contact-messages/{id},super_admin|relations_manager,Permanently delete private contact message

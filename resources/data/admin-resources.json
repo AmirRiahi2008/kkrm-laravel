@@ -1,0 +1,1345 @@
+{
+  "posts": {
+    "label": "اخبار، مقاله‌ها و اطلاعیه‌ها",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "type",
+        "label": "نوع مطلب",
+        "type": "select",
+        "options": {
+          "news": "اخبار کانون",
+          "article": "مقاله‌ها",
+          "announcement": "اطلاعیه‌ها",
+          "resolution": "مصوبات",
+          "training": "آموزش",
+          "welfare": "اخبار رفاهی",
+          "condolence": "پیام‌های تسلیت",
+          "group_event": "رویدادهای گروه‌ها"
+        },
+        "required": true
+      },
+      {
+        "key": "excerpt",
+        "label": "خلاصه",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "body",
+        "label": "متن مطلب",
+        "type": "editor",
+        "required": true
+      },
+      {
+        "key": "cover_id",
+        "label": "تصویر شاخص",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "category_id",
+        "label": "دسته‌بندی",
+        "source": "categories",
+        "required": false,
+        "type": "ref"
+      },
+      {
+        "key": "tag_ids",
+        "label": "برچسب‌ها",
+        "source": "tags",
+        "required": false,
+        "type": "multi"
+      },
+      {
+        "key": "attachment_ids",
+        "label": "پیوست‌ها",
+        "source": "media",
+        "required": false,
+        "type": "multi"
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "review": "در انتظار بررسی",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "expires_at",
+        "label": "زمان پایان نمایش",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "is_featured",
+        "label": "خبر برگزیده",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "is_pinned",
+        "label": "سنجاق‌شده",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      },
+      {
+        "key": "meta_title",
+        "label": "عنوان سئو",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "meta_description",
+        "label": "توضیح سئو",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "categories": {
+    "label": "دسته‌بندی‌ها",
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "parent_id",
+        "label": "دسته مادر",
+        "source": "categories",
+        "required": false,
+        "type": "ref"
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "tags": {
+    "label": "برچسب‌ها",
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی",
+        "type": "text",
+        "required": true
+      }
+    ]
+  },
+  "pages": {
+    "label": "صفحات کانون",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "path",
+        "label": "نشانی دلخواه صفحه",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "summary",
+        "label": "معرفی کوتاه صفحه",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "body",
+        "label": "متن صفحه",
+        "type": "editor",
+        "required": true
+      },
+      {
+        "key": "cover_id",
+        "label": "تصویر شاخص",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      },
+      {
+        "key": "meta_title",
+        "label": "عنوان سئو",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "meta_description",
+        "label": "توضیح سئو",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "documents": {
+    "label": "قوانین و اسناد",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "type",
+        "label": "نوع سند",
+        "type": "select",
+        "options": {
+          "law": "قوانین",
+          "regulation": "آیین‌نامه‌ها",
+          "statute": "نظام‌نامه‌ها",
+          "directive": "دستورالعمل‌ها",
+          "circular": "بخشنامه‌ها",
+          "form": "فرم‌ها",
+          "qualification_table": "جدول صلاحیت‌ها",
+          "tariff": "تعرفه دستمزد"
+        },
+        "required": true
+      },
+      {
+        "key": "description",
+        "label": "توضیح",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "body",
+        "label": "متن سند",
+        "type": "editor",
+        "required": false
+      },
+      {
+        "key": "file_id",
+        "label": "فایل پیوست",
+        "type": "media",
+        "accept": "image/jpeg,image/png,image/webp,application/pdf"
+      },
+      {
+        "key": "source_url",
+        "label": "نشانی منبع",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "document_number",
+        "label": "شماره سند",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "issued_at",
+        "label": "تاریخ صدور",
+        "type": "date",
+        "required": false
+      },
+      {
+        "key": "is_demo",
+        "label": "داده آزمایشی",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      },
+      {
+        "key": "meta_title",
+        "label": "عنوان سئو",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "meta_description",
+        "label": "توضیح سئو",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "expert-groups": {
+    "label": "گروه‌های کارشناسی",
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام گروه",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "code",
+        "label": "کد گروه",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "description",
+        "label": "توضیح",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "disciplines": {
+    "label": "رشته‌های کارشناسی",
+    "fields": [
+      {
+        "key": "expert_group_id",
+        "label": "گروه",
+        "source": "expert-groups",
+        "required": true,
+        "type": "ref"
+      },
+      {
+        "key": "name",
+        "label": "نام رشته",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "code",
+        "label": "کد رشته",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "qualifications": {
+    "label": "صلاحیت‌ها",
+    "fields": [
+      {
+        "key": "discipline_id",
+        "label": "رشته",
+        "source": "disciplines",
+        "required": true,
+        "type": "ref"
+      },
+      {
+        "key": "title",
+        "label": "عنوان صلاحیت",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "code",
+        "label": "کد صلاحیت",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "description",
+        "label": "توضیح",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "experts": {
+    "label": "کارشناسان",
+    "fields": [
+      {
+        "key": "discipline_id",
+        "label": "رشته",
+        "source": "disciplines",
+        "required": true,
+        "type": "ref"
+      },
+      {
+        "key": "first_name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "last_name",
+        "label": "نام خانوادگی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "license_number",
+        "label": "شماره پروانه",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "city",
+        "label": "شهر",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "geographical_scope",
+        "label": "حوزه جغرافیایی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "biography",
+        "label": "زندگینامه",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "photo_id",
+        "label": "تصویر کارشناس",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "phone",
+        "label": "تلفن",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "email",
+        "label": "ایمیل",
+        "type": "email",
+        "required": false
+      },
+      {
+        "key": "show_contact",
+        "label": "نمایش عمومی اطلاعات تماس",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "is_published",
+        "label": "نمایش در سایت",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "active": "فعال",
+          "inactive": "غیرفعال",
+          "suspended": "تعلیق"
+        },
+        "required": false
+      },
+      {
+        "key": "qualification_ids",
+        "label": "صلاحیت‌ها",
+        "source": "qualifications",
+        "required": false,
+        "type": "multi"
+      }
+    ]
+  },
+  "board-members": {
+    "label": "اعضای هیئت و ارکان",
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "position",
+        "label": "سمت",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "contact_label",
+        "label": "عنوان راه ارتباطی",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "contact_url",
+        "label": "لینک راه ارتباطی",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "role",
+        "label": "رکن",
+        "type": "select",
+        "options": {
+          "board": "هیئت مدیره",
+          "inspector": "بازرسان",
+          "prosecutor": "دادستان انتظامی",
+          "former_president": "رؤسای پیشین"
+        },
+        "required": true
+      },
+      {
+        "key": "photo_id",
+        "label": "تصویر",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "biography",
+        "label": "معرفی",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "agreements": {
+    "label": "قراردادها و تفاهم‌نامه‌ها",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "partner",
+        "label": "طرف قرارداد",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "body",
+        "label": "متن",
+        "type": "editor",
+        "required": true
+      },
+      {
+        "key": "file_id",
+        "label": "فایل پیوست",
+        "type": "media",
+        "accept": "image/jpeg,image/png,image/webp,application/pdf"
+      },
+      {
+        "key": "cover_id",
+        "label": "تصویر شاخص",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "starts_at",
+        "label": "شروع",
+        "type": "date",
+        "required": false
+      },
+      {
+        "key": "ends_at",
+        "label": "پایان",
+        "type": "date",
+        "required": false
+      },
+      {
+        "key": "is_demo",
+        "label": "داده آزمایشی",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      }
+    ]
+  },
+  "albums": {
+    "label": "آلبوم‌ها",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "type",
+        "label": "نوع آلبوم",
+        "type": "select",
+        "options": {
+          "photo": "عکس"
+        },
+        "required": false
+      },
+      {
+        "key": "description",
+        "label": "توضیح",
+        "type": "textarea",
+        "required": false
+      },
+      {
+        "key": "cover_id",
+        "label": "تصویر شاخص",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "event_date",
+        "label": "تاریخ رویداد",
+        "type": "date",
+        "required": false
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      }
+    ]
+  },
+  "events": {
+    "label": "رویدادها",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی مطلب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "body",
+        "label": "متن رویداد",
+        "type": "editor",
+        "required": true
+      },
+      {
+        "key": "cover_id",
+        "label": "تصویر شاخص",
+        "type": "media",
+        "accept": "image/*"
+      },
+      {
+        "key": "mode",
+        "label": "نوع برگزاری",
+        "type": "select",
+        "options": {
+          "in_person": "حضوری",
+          "online": "مجازی",
+          "hybrid": "ترکیبی"
+        },
+        "required": true
+      },
+      {
+        "key": "location",
+        "label": "محل برگزاری",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "starts_at",
+        "label": "زمان شروع",
+        "type": "datetime",
+        "required": true
+      },
+      {
+        "key": "ends_at",
+        "label": "زمان پایان",
+        "type": "datetime",
+        "required": true
+      },
+      {
+        "key": "registration_url",
+        "label": "نشانی سامانه رویداد",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "draft": "پیش‌نویس",
+          "published": "منتشرشده",
+          "archived": "بایگانی"
+        },
+        "required": false
+      },
+      {
+        "key": "published_at",
+        "label": "زمان انتشار",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "show_in_slideshow",
+        "label": "نمایش در اسلایدشو صفحه اصلی",
+        "type": "boolean",
+        "hint": "فقط محتوای منتشرشده و انتخاب‌شده در اسلایدشو دیده می‌شود. تصویر اختیاری است."
+      },
+      {
+        "key": "meta_title",
+        "label": "عنوان سئو",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "meta_description",
+        "label": "توضیح سئو",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "faqs": {
+    "label": "پرسش‌های متداول",
+    "fields": [
+      {
+        "key": "question",
+        "label": "پرسش",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "answer",
+        "label": "پاسخ",
+        "type": "editor",
+        "required": true
+      },
+      {
+        "key": "group",
+        "label": "گروه",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "slides": {
+    "label": "اسلایدر صفحه اول",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "image_id",
+        "label": "تصویر",
+        "type": "media",
+        "accept": "image/*",
+        "required": true
+      },
+      {
+        "key": "target_url",
+        "label": "لینک مقصد",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "starts_at",
+        "label": "شروع نمایش",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "ends_at",
+        "label": "پایان نمایش",
+        "type": "datetime",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "links": {
+    "label": "سامانه‌ها و پیوندها",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "code",
+        "label": "کد",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "url",
+        "label": "نشانی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "group",
+        "label": "گروه",
+        "type": "select",
+        "options": {
+          "systems": "سامانه‌ها",
+          "useful": "پیوندهای مفید",
+          "quick": "سریع",
+          "social": "شبکه‌های اجتماعی"
+        },
+        "required": true
+      },
+      {
+        "key": "icon",
+        "label": "آیکون",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "menu-items": {
+    "label": "منوهای سایت",
+    "fields": [
+      {
+        "key": "title",
+        "label": "عنوان",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "location",
+        "label": "محل نمایش لینک",
+        "type": "select",
+        "options": {
+          "header": "هدر",
+          "footer": "فوتر",
+          "mobile": "موبایل",
+          "quick": "دسترسی سریع"
+        },
+        "required": true
+      },
+      {
+        "key": "display_mode",
+        "label": "نحوه نمایش",
+        "type": "select",
+        "options": {
+          "mega": "داخل مگامنو",
+          "main": "ناوبری اصلی",
+          "both": "ناوبری اصلی و مگامنو"
+        },
+        "required": false
+      },
+      {
+        "key": "page_id",
+        "label": "اتصال به صفحه ساخته‌شده",
+        "source": "pages",
+        "required": false,
+        "type": "ref",
+        "hint": "با انتخاب صفحه، مسیر مقصد خودکار تنظیم می‌شود و تغییر نشانی صفحه به منو منتقل می‌شود. برای لینک معمولی این گزینه را خالی بگذارید."
+      },
+      {
+        "key": "url",
+        "label": "مسیر مقصد",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "parent_id",
+        "label": "زیر یک لینک دیگر",
+        "source": "menu-items",
+        "required": false,
+        "type": "ref"
+      },
+      {
+        "key": "open_new_tab",
+        "label": "باز شدن در تب جدید",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "bank-accounts": {
+    "label": "حساب‌های بانکی",
+    "fields": [
+      {
+        "key": "bank_name",
+        "label": "بانک",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "holder",
+        "label": "صاحب حساب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "purpose",
+        "label": "کاربرد",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "account_number",
+        "label": "شماره حساب",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "iban",
+        "label": "شبا",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "card_number",
+        "label": "شماره کارت",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "is_demo",
+        "label": "حساب آزمایشی",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "tariffs": {
+    "label": "تعرفه‌ها",
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "slug",
+        "label": "نشانی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "effective_from",
+        "label": "تاریخ اجرا",
+        "type": "date",
+        "required": true
+      },
+      {
+        "key": "effective_to",
+        "label": "پایان اعتبار",
+        "type": "date",
+        "required": false
+      },
+      {
+        "key": "source_url",
+        "label": "منبع",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "approval_reference",
+        "label": "مرجع تصویب",
+        "type": "text",
+        "required": false
+      },
+      {
+        "key": "is_demo",
+        "label": "تعرفه آزمایشی",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "rules",
+        "label": "ضرایب تعرفه",
+        "type": "rules",
+        "required": true
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "redirects": {
+    "label": "نشانی‌های قدیمی",
+    "fields": [
+      {
+        "key": "old_path",
+        "label": "مسیر قدیمی",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "new_path",
+        "label": "مسیر جدید",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "status_code",
+        "label": "نوع انتقال",
+        "type": "select",
+        "options": {
+          "301": "دائمی ۳۰۱",
+          "308": "دائمی ۳۰۸"
+        },
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "key": "sort_order",
+        "label": "ترتیب نمایش",
+        "type": "number",
+        "required": false
+      }
+    ]
+  },
+  "users": {
+    "label": "کاربران داشبورد",
+    "noDelete": true,
+    "noTrash": true,
+    "fields": [
+      {
+        "key": "name",
+        "label": "نام",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "email",
+        "label": "ایمیل",
+        "type": "email",
+        "required": true
+      },
+      {
+        "key": "role",
+        "label": "نقش",
+        "type": "select",
+        "options": {
+          "super_admin": "مدیر ارشد",
+          "relations_manager": "مدیر روابط عمومی",
+          "editor": "نویسنده"
+        },
+        "required": true
+      },
+      {
+        "key": "password",
+        "label": "رمز عبور",
+        "type": "password",
+        "required": false
+      },
+      {
+        "key": "password_confirmation",
+        "label": "تکرار رمز",
+        "type": "password",
+        "required": false
+      },
+      {
+        "key": "is_active",
+        "label": "فعال",
+        "type": "boolean",
+        "required": false
+      }
+    ]
+  },
+  "contact-messages": {
+    "label": "پیام‌های دریافتی",
+    "noCreate": true,
+    "noTrash": true,
+    "fields": [
+      {
+        "key": "status",
+        "label": "وضعیت",
+        "type": "select",
+        "options": {
+          "new": "جدید",
+          "read": "خوانده‌شده",
+          "closed": "بسته"
+        },
+        "required": false
+      },
+      {
+        "key": "internal_note",
+        "label": "یادداشت داخلی",
+        "type": "textarea",
+        "required": false
+      }
+    ]
+  },
+  "audit-logs": {
+    "label": "گزارش فعالیت‌ها",
+    "readOnly": true,
+    "noTrash": true,
+    "fields": []
+  }
+}

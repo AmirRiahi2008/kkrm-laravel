@@ -1,0 +1,5047 @@
+{
+  "info": {
+    "name": "KKRM Laravel API",
+    "description": "Run CSRF-cookie then Login. Cookie jar enabled. Replace sample IDs and request bodies using openapi.json. Do not run the entire collection on a live database; write requests modify data.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "frontend_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "staff_email",
+      "value": "admin@example.test"
+    },
+    {
+      "key": "staff_password",
+      "value": "DemoAdmin!2026"
+    },
+    {
+      "key": "id",
+      "value": "1"
+    },
+    {
+      "key": "key",
+      "value": "1"
+    },
+    {
+      "key": "lock_version",
+      "value": "1"
+    },
+    {
+      "key": "xsrf_token",
+      "value": ""
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const token = pm.collectionVariables.get('xsrf_token');",
+          "if (token && !['GET', 'HEAD', 'OPTIONS'].includes(pm.request.method)) {",
+          "  pm.request.headers.upsert({ key: 'X-XSRF-TOKEN', value: token });",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.response.headers.all().filter(h => h.key.toLowerCase() === 'set-cookie').forEach(h => {",
+          "  const match = /^XSRF-TOKEN=([^;]*)/.exec(h.value);",
+          "  if (match) pm.collectionVariables.set('xsrf_token', decodeURIComponent(match[1]));",
+          "});"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Authentication",
+      "item": [
+        {
+          "name": "GET /sanctum/csrf-cookie",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/sanctum/csrf-cookie",
+            "description": "Initialize CSRF cookies\n"
+          }
+        },
+        {
+          "name": "POST /api/v1/auth/login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/login",
+            "description": "Login\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{staff_email}}\",\n  \"password\": \"{{staff_password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/auth/me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/me",
+            "description": "Me\n"
+          }
+        },
+        {
+          "name": "POST /api/v1/auth/logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/logout",
+            "description": "Logout\n"
+          }
+        },
+        {
+          "name": "PUT /api/v1/auth/password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/password",
+            "description": "Password\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"نمونه آزمایشی\",\n  \"password_confirmation\": \"نمونه آزمایشی\",\n  \"current_password\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/auth/forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/forgot-password",
+            "description": "Forgot Password\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sample@example.test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/auth/reset-password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/auth/reset-password",
+            "description": "Reset Password\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"نمونه آزمایشی\",\n  \"password_confirmation\": \"نمونه آزمایشی\",\n  \"email\": \"sample@example.test\",\n  \"token\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Public",
+      "item": [
+        {
+          "name": "GET /api/v1/home",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/home",
+            "description": "Read home\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/navigation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/navigation",
+            "description": "Read navigation\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/settings",
+            "description": "Read settings\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/search?q=%D8%A2%D8%B2%D9%85%D8%A7%DB%8C%D8%B4%DB%8C",
+            "description": "Read search\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/redirects/resolve",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/redirects/resolve?path=%2F%3Fpage_id%3D977",
+            "description": "Read redirects/resolve\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/seo/sitemap",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/seo/sitemap",
+            "description": "Sitemap entries for Next.js metadata route\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/media/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/media/{{id}}",
+            "description": "Download published file or authorized private preview\n"
+          }
+        },
+        {
+          "name": "POST /api/v1/contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/contact",
+            "description": "Submit private contact message\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"email\": \"sample@example.test\",\n  \"subject\": \"نمونه آزمایشی\",\n  \"message\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "POST /api/v1/tariffs/calculate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/tariffs/calculate",
+            "description": "Calculate configurable tariff estimate in integer rials\n",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"value\": 20000000,\n  \"expert_count\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/posts",
+            "description": "List published/active posts\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/posts/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/posts/{{key}}",
+            "description": "Read posts by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/categories",
+            "description": "List published/active categories\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/categories/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/categories/{{key}}",
+            "description": "Read categories by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/tags",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/tags",
+            "description": "List published/active tags\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/tags/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/tags/{{key}}",
+            "description": "Read tags by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/pages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/pages",
+            "description": "List published/active pages\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/pages/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/pages/{{key}}",
+            "description": "Read pages by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/documents",
+            "description": "List published/active documents\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/documents/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/documents/{{key}}",
+            "description": "Read documents by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/expert-groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/expert-groups",
+            "description": "List published/active expert-groups\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/expert-groups/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/expert-groups/{{key}}",
+            "description": "Read expert-groups by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/disciplines",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/disciplines",
+            "description": "List published/active disciplines\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/disciplines/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/disciplines/{{key}}",
+            "description": "Read disciplines by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/qualifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/qualifications",
+            "description": "List published/active qualifications\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/qualifications/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/qualifications/{{key}}",
+            "description": "Read qualifications by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/experts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/experts",
+            "description": "List published/active experts\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/experts/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/experts/{{key}}",
+            "description": "Read experts by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/board-terms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/board-terms",
+            "description": "List published/active board-terms\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/board-terms/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/board-terms/{{key}}",
+            "description": "Read board-terms by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/board-members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/board-members",
+            "description": "List published/active board-members\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/board-members/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/board-members/{{key}}",
+            "description": "Read board-members by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/agreements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/agreements",
+            "description": "List published/active agreements\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/agreements/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/agreements/{{key}}",
+            "description": "Read agreements by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/albums",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/albums",
+            "description": "List published/active albums\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/albums/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/albums/{{key}}",
+            "description": "Read albums by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/events",
+            "description": "List published/active events\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/events/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/events/{{key}}",
+            "description": "Read events by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/faqs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/faqs",
+            "description": "List published/active faqs\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/faqs/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/faqs/{{key}}",
+            "description": "Read faqs by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/slides",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/slides",
+            "description": "List published/active slides\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/slides/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/slides/{{key}}",
+            "description": "Read slides by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/links",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/links",
+            "description": "List published/active links\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/links/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/links/{{key}}",
+            "description": "Read links by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/bank-accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/bank-accounts",
+            "description": "List published/active bank-accounts\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/bank-accounts/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/bank-accounts/{{key}}",
+            "description": "Read bank-accounts by numeric ID or slug\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/tariffs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/tariffs",
+            "description": "List published/active tariffs\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/tariffs/{key}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/tariffs/{{key}}",
+            "description": "Read tariffs by numeric ID or slug\n"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Administration",
+      "item": [
+        {
+          "name": "GET /api/v1/admin/posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts",
+            "description": "List manageable posts\nAllowed roles: super_admin, relations_manager, editor."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/posts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts",
+            "description": "Create posts\nAllowed roles: super_admin, relations_manager, editor.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"خبر آزمایشی\",\n  \"slug\": \"sample-news-{{$timestamp}}\",\n  \"type\": \"news\",\n  \"body\": \"<p>متن آزمایشی خبر</p>\",\n  \"status\": \"draft\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/posts/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}",
+            "description": "Read administrative posts\nAllowed roles: super_admin, relations_manager, editor."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/posts/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}",
+            "description": "Update posts\nAllowed roles: super_admin, relations_manager, editor.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"عنوان ویرایش‌شده\",\n  \"lock_version\": \"{{lock_version}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/posts/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}",
+            "description": "Update posts\nAllowed roles: super_admin, relations_manager, editor.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"عنوان ویرایش‌شده\",\n  \"lock_version\": \"{{lock_version}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/posts/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}",
+            "description": "Soft-delete posts\nAllowed roles: super_admin, relations_manager, editor."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/posts/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}/restore",
+            "description": "Restore posts (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories",
+            "description": "List manageable categories\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/categories",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories",
+            "description": "Create categories\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/categories/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories/{{id}}",
+            "description": "Read administrative categories\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/categories/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories/{{id}}",
+            "description": "Update categories\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/categories/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories/{{id}}",
+            "description": "Update categories\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/categories/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories/{{id}}",
+            "description": "Soft-delete categories\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/categories/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/categories/{{id}}/restore",
+            "description": "Restore categories (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/tags",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags",
+            "description": "List manageable tags\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/tags",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags",
+            "description": "Create tags\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/tags/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags/{{id}}",
+            "description": "Read administrative tags\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/tags/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags/{{id}}",
+            "description": "Update tags\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/tags/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags/{{id}}",
+            "description": "Update tags\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/tags/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags/{{id}}",
+            "description": "Soft-delete tags\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/tags/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tags/{{id}}/restore",
+            "description": "Restore tags (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/pages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages",
+            "description": "List manageable pages\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/pages",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages",
+            "description": "Create pages\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"body\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/pages/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages/{{id}}",
+            "description": "Read administrative pages\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/pages/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages/{{id}}",
+            "description": "Update pages\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/pages/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages/{{id}}",
+            "description": "Update pages\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/pages/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages/{{id}}",
+            "description": "Soft-delete pages\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/pages/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/pages/{{id}}/restore",
+            "description": "Restore pages (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents",
+            "description": "List manageable documents\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/documents",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents",
+            "description": "Create documents\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"type\": \"law\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/documents/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents/{{id}}",
+            "description": "Read administrative documents\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/documents/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents/{{id}}",
+            "description": "Update documents\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/documents/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents/{{id}}",
+            "description": "Update documents\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/documents/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents/{{id}}",
+            "description": "Soft-delete documents\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/documents/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/documents/{{id}}/restore",
+            "description": "Restore documents (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/expert-groups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups",
+            "description": "List manageable expert-groups\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/expert-groups",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups",
+            "description": "Create expert-groups\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"code\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/expert-groups/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups/{{id}}",
+            "description": "Read administrative expert-groups\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/expert-groups/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups/{{id}}",
+            "description": "Update expert-groups\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/expert-groups/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups/{{id}}",
+            "description": "Update expert-groups\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/expert-groups/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups/{{id}}",
+            "description": "Soft-delete expert-groups\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/expert-groups/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/expert-groups/{{id}}/restore",
+            "description": "Restore expert-groups (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/disciplines",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines",
+            "description": "List manageable disciplines\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/disciplines",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines",
+            "description": "Create disciplines\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expert_group_id\": 1,\n  \"name\": \"نمونه آزمایشی\",\n  \"code\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/disciplines/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines/{{id}}",
+            "description": "Read administrative disciplines\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/disciplines/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines/{{id}}",
+            "description": "Update disciplines\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/disciplines/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines/{{id}}",
+            "description": "Update disciplines\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/disciplines/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines/{{id}}",
+            "description": "Soft-delete disciplines\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/disciplines/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/disciplines/{{id}}/restore",
+            "description": "Restore disciplines (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/qualifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications",
+            "description": "List manageable qualifications\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/qualifications",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications",
+            "description": "Create qualifications\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discipline_id\": 1,\n  \"title\": \"نمونه آزمایشی\",\n  \"code\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/qualifications/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications/{{id}}",
+            "description": "Read administrative qualifications\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/qualifications/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications/{{id}}",
+            "description": "Update qualifications\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/qualifications/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications/{{id}}",
+            "description": "Update qualifications\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/qualifications/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications/{{id}}",
+            "description": "Soft-delete qualifications\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/qualifications/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/qualifications/{{id}}/restore",
+            "description": "Restore qualifications (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/experts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts",
+            "description": "List manageable experts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/experts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts",
+            "description": "Create experts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discipline_id\": 1,\n  \"first_name\": \"نمونه آزمایشی\",\n  \"last_name\": \"نمونه آزمایشی\",\n  \"license_number\": \"نمونه آزمایشی\",\n  \"city\": \"نمونه آزمایشی\",\n  \"geographical_scope\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/experts/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts/{{id}}",
+            "description": "Read administrative experts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/experts/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts/{{id}}",
+            "description": "Update experts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/experts/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts/{{id}}",
+            "description": "Update experts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/experts/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts/{{id}}",
+            "description": "Soft-delete experts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/experts/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/experts/{{id}}/restore",
+            "description": "Restore experts (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/board-terms",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms",
+            "description": "List manageable board-terms\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/board-terms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms",
+            "description": "Create board-terms\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"started_at\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/board-terms/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms/{{id}}",
+            "description": "Read administrative board-terms\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/board-terms/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms/{{id}}",
+            "description": "Update board-terms\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/board-terms/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms/{{id}}",
+            "description": "Update board-terms\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/board-terms/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms/{{id}}",
+            "description": "Soft-delete board-terms\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/board-terms/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-terms/{{id}}/restore",
+            "description": "Restore board-terms (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/board-members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members",
+            "description": "List manageable board-members\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/board-members",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members",
+            "description": "Create board-members\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"position\": \"نمونه آزمایشی\",\n  \"role\": \"board\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/board-members/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members/{{id}}",
+            "description": "Read administrative board-members\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/board-members/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members/{{id}}",
+            "description": "Update board-members\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/board-members/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members/{{id}}",
+            "description": "Update board-members\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/board-members/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members/{{id}}",
+            "description": "Soft-delete board-members\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/board-members/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/board-members/{{id}}/restore",
+            "description": "Restore board-members (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/agreements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements",
+            "description": "List manageable agreements\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/agreements",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements",
+            "description": "Create agreements\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"partner\": \"نمونه آزمایشی\",\n  \"body\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/agreements/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements/{{id}}",
+            "description": "Read administrative agreements\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/agreements/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements/{{id}}",
+            "description": "Update agreements\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/agreements/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements/{{id}}",
+            "description": "Update agreements\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/agreements/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements/{{id}}",
+            "description": "Soft-delete agreements\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/agreements/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/agreements/{{id}}/restore",
+            "description": "Restore agreements (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/albums",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums",
+            "description": "List manageable albums\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/albums",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums",
+            "description": "Create albums\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/albums/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}",
+            "description": "Read administrative albums\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/albums/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}",
+            "description": "Update albums\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/albums/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}",
+            "description": "Update albums\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/albums/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}",
+            "description": "Soft-delete albums\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/albums/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}/restore",
+            "description": "Restore albums (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events",
+            "description": "List manageable events\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/events",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events",
+            "description": "Create events\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"body\": \"نمونه آزمایشی\",\n  \"mode\": \"in_person\",\n  \"starts_at\": \"نمونه آزمایشی\",\n  \"ends_at\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/events/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events/{{id}}",
+            "description": "Read administrative events\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/events/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events/{{id}}",
+            "description": "Update events\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/events/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events/{{id}}",
+            "description": "Update events\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/events/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events/{{id}}",
+            "description": "Soft-delete events\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/events/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/events/{{id}}/restore",
+            "description": "Restore events (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/faqs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs",
+            "description": "List manageable faqs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/faqs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs",
+            "description": "Create faqs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"نمونه آزمایشی\",\n  \"answer\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/faqs/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs/{{id}}",
+            "description": "Read administrative faqs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/faqs/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs/{{id}}",
+            "description": "Update faqs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/faqs/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs/{{id}}",
+            "description": "Update faqs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/faqs/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs/{{id}}",
+            "description": "Soft-delete faqs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/faqs/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/faqs/{{id}}/restore",
+            "description": "Restore faqs (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/slides",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides",
+            "description": "List manageable slides\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/slides",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides",
+            "description": "Create slides\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"image_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/slides/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides/{{id}}",
+            "description": "Read administrative slides\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/slides/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides/{{id}}",
+            "description": "Update slides\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/slides/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides/{{id}}",
+            "description": "Update slides\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/slides/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides/{{id}}",
+            "description": "Soft-delete slides\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/slides/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/slides/{{id}}/restore",
+            "description": "Restore slides (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/links",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links",
+            "description": "List manageable links\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/links",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links",
+            "description": "Create links\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"نمونه آزمایشی\",\n  \"code\": \"نمونه آزمایشی\",\n  \"url\": \"نمونه آزمایشی\",\n  \"group\": \"systems\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/links/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links/{{id}}",
+            "description": "Read administrative links\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/links/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links/{{id}}",
+            "description": "Update links\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/links/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links/{{id}}",
+            "description": "Update links\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/links/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links/{{id}}",
+            "description": "Soft-delete links\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/links/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/links/{{id}}/restore",
+            "description": "Restore links (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/menu-items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items",
+            "description": "List manageable menu-items\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/menu-items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items",
+            "description": "Create menu-items\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location\": \"header\",\n  \"title\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/menu-items/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items/{{id}}",
+            "description": "Read administrative menu-items\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/menu-items/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items/{{id}}",
+            "description": "Update menu-items\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/menu-items/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items/{{id}}",
+            "description": "Update menu-items\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/menu-items/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items/{{id}}",
+            "description": "Soft-delete menu-items\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/menu-items/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/menu-items/{{id}}/restore",
+            "description": "Restore menu-items (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/bank-accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts",
+            "description": "List manageable bank-accounts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/bank-accounts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts",
+            "description": "Create bank-accounts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bank_name\": \"نمونه آزمایشی\",\n  \"holder\": \"نمونه آزمایشی\",\n  \"purpose\": \"نمونه آزمایشی\",\n  \"account_number\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/bank-accounts/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts/{{id}}",
+            "description": "Read administrative bank-accounts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/bank-accounts/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts/{{id}}",
+            "description": "Update bank-accounts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/bank-accounts/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts/{{id}}",
+            "description": "Update bank-accounts\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/bank-accounts/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts/{{id}}",
+            "description": "Soft-delete bank-accounts\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/bank-accounts/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/bank-accounts/{{id}}/restore",
+            "description": "Restore bank-accounts (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/tariffs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs",
+            "description": "List manageable tariffs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/tariffs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs",
+            "description": "Create tariffs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"slug\": \"نمونه آزمایشی\",\n  \"effective_from\": \"نمونه آزمایشی\",\n  \"rules\": {\n    \"base_fee\": 1,\n    \"minimum_fee\": 1,\n    \"maximum_fee\": 1,\n    \"tiers\": [],\n    \"panel_multipliers\": {\n      \"1\": 10000,\n      \"2\": 10000,\n      \"3\": 10000,\n      \"4\": 10000,\n      \"5\": 10000\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/tariffs/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs/{{id}}",
+            "description": "Read administrative tariffs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/tariffs/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs/{{id}}",
+            "description": "Update tariffs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/tariffs/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs/{{id}}",
+            "description": "Update tariffs\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/tariffs/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs/{{id}}",
+            "description": "Soft-delete tariffs\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/tariffs/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/tariffs/{{id}}/restore",
+            "description": "Restore tariffs (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/redirects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects",
+            "description": "List manageable redirects\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/redirects",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects",
+            "description": "Create redirects\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_path\": \"نمونه آزمایشی\",\n  \"new_path\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/redirects/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects/{{id}}",
+            "description": "Read administrative redirects\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/redirects/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects/{{id}}",
+            "description": "Update redirects\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/redirects/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects/{{id}}",
+            "description": "Update redirects\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/redirects/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects/{{id}}",
+            "description": "Soft-delete redirects\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/redirects/{id}/restore",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/redirects/{{id}}/restore",
+            "description": "Restore redirects (published content becomes draft)\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/posts/{id}/revisions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/posts/{{id}}/revisions",
+            "description": "Post revision history\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/dashboard",
+            "description": "Staff dashboard\n"
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/audit-logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/audit-logs",
+            "description": "Audit trail without password or IP values\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/media",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/media",
+            "description": "List staff-accessible media\n"
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/media",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/media",
+            "description": "Upload and inspect private media\n",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "alt",
+                  "type": "text",
+                  "value": "تصویر نمونه"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/media/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/media/{{id}}",
+            "description": "Delete unreferenced media record\n"
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/albums/{id}/items",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/albums/{{id}}/items",
+            "description": "Atomically replace album items\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/settings",
+            "description": "Read whitelisted site settings\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/settings",
+            "description": "Update whitelisted site settings\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"settings\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/users",
+            "description": "List users\nAllowed roles: super_admin."
+          }
+        },
+        {
+          "name": "POST /api/v1/admin/users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/users",
+            "description": "Create invited public relations staff account\nAllowed roles: super_admin.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"نمونه آزمایشی\",\n  \"email\": \"sample@example.test\",\n  \"role\": \"super_admin\",\n  \"password\": \"نمونه آزمایشی\",\n  \"password_confirmation\": \"نمونه آزمایشی\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/users/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/users/{{id}}",
+            "description": "Read users\nAllowed roles: super_admin."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/users/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/users/{{id}}",
+            "description": "Update users\nAllowed roles: super_admin.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/users/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/users/{{id}}",
+            "description": "Update users\nAllowed roles: super_admin.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/contact-messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/contact-messages",
+            "description": "List contact-messages\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "GET /api/v1/admin/contact-messages/{id}",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/contact-messages/{{id}}",
+            "description": "Read contact-messages\nAllowed roles: super_admin, relations_manager."
+          }
+        },
+        {
+          "name": "PATCH /api/v1/admin/contact-messages/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/contact-messages/{{id}}",
+            "description": "Update contact-messages\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "PUT /api/v1/admin/contact-messages/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/contact-messages/{{id}}",
+            "description": "Update contact-messages\nAllowed roles: super_admin, relations_manager.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "DELETE /api/v1/admin/contact-messages/{id}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "{{frontend_url}}"
+              }
+            ],
+            "url": "{{base_url}}/api/v1/admin/contact-messages/{{id}}",
+            "description": "Permanently delete private contact message\nAllowed roles: super_admin, relations_manager."
+          }
+        }
+      ]
+    }
+  ]
+}

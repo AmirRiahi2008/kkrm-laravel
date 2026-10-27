@@ -1,0 +1,100 @@
+{
+  "news": {
+    "api": "posts",
+    "label": "اخبار و اطلاعیه‌ها",
+    "types": {
+      "news": "اخبار کانون",
+      "announcement": "اطلاعیه‌ها",
+      "resolution": "مصوبات",
+      "training": "آموزش",
+      "welfare": "اخبار رفاهی",
+      "condolence": "پیام‌های تسلیت",
+      "group_event": "رویدادهای گروه‌ها"
+    }
+  },
+  "articles": {
+    "api": "posts",
+    "label": "مقاله‌ها"
+  },
+  "documents": {
+    "api": "documents",
+    "label": "قوانین و اسناد",
+    "types": {
+      "law": "قوانین",
+      "regulation": "آیین‌نامه‌ها",
+      "statute": "نظام‌نامه‌ها",
+      "directive": "دستورالعمل‌ها",
+      "circular": "بخشنامه‌ها",
+      "form": "فرم‌ها",
+      "qualification_table": "جدول صلاحیت‌ها",
+      "tariff": "تعرفه دستمزد"
+    }
+  },
+  "albums": {
+    "api": "albums",
+    "label": "گالری کانون",
+    "types": {
+      "photo": "تصاویر"
+    }
+  },
+  "events": {
+    "api": "events",
+    "label": "رویدادهای کانون"
+  },
+  "pages": {
+    "api": "pages",
+    "label": "درباره کانون"
+  },
+  "experts": {
+    "api": "experts",
+    "label": "جستجوی کارشناس"
+  },
+  "expert-groups": {
+    "api": "expert-groups",
+    "label": "گروه‌های دوازده‌گانه کارشناسی"
+  },
+  "disciplines": {
+    "api": "disciplines",
+    "label": "رشته‌های کارشناسی"
+  },
+  "qualifications": {
+    "api": "qualifications",
+    "label": "صلاحیت‌های کارشناسی"
+  },
+  "board-members": {
+    "api": "board-members",
+    "label": "هیئت مدیره، بازرسان و دادستان انتظامی"
+  },
+  "board-terms": {
+    "api": "board-terms",
+    "label": "دوره‌های هیئت مدیره"
+  },
+  "agreements": {
+    "api": "agreements",
+    "label": "قراردادها و تفاهم‌نامه‌ها"
+  },
+  "faqs": {
+    "api": "faqs",
+    "label": "پرسش‌های متداول"
+  },
+  "bank-accounts": {
+    "api": "bank-accounts",
+    "label": "شماره حساب‌های کانون"
+  },
+  "systems": {
+    "api": "links",
+    "label": "سامانه‌های الکترونیکی"
+  },
+  "links": {
+    "api": "links",
+    "label": "پیوندهای مفید"
+  },
+  "categories": {
+    "api": "categories",
+    "label": "دسته‌بندی‌ها"
+  },
+  "tags": {
+    "api": "tags",
+    "label": "برچسب‌ها"
+  }
+}

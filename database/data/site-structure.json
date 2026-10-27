@@ -1,0 +1,269 @@
+{
+  "documents": [
+    {
+      "page_id": 984,
+      "slug": "experts-law",
+      "title": "قانون کارشناسان رسمی دادگستری",
+      "type": "law"
+    },
+    {
+      "page_id": 986,
+      "slug": "executive-regulation",
+      "title": "آیین‌نامه اجرایی قانون",
+      "type": "regulation"
+    },
+    {
+      "page_id": 1207,
+      "slug": "disciplinary-regulation",
+      "title": "آیین‌نامه رسیدگی به تخلفات کارشناسان",
+      "type": "regulation"
+    },
+    {
+      "page_id": 1154,
+      "slug": "transfer-statute",
+      "title": "نظام‌نامه نقل و انتقالات کارشناسان",
+      "type": "statute"
+    },
+    {
+      "page_id": 1159,
+      "slug": "geographical-scope",
+      "title": "نظام‌نامه توسعه حوزه جغرافیایی و فعالیت خدمات کارشناسی",
+      "type": "statute"
+    },
+    {
+      "page_id": 1164,
+      "slug": "financial-statute",
+      "title": "نظام‌نامه مالی و معاملاتی کانون‌ها",
+      "type": "statute"
+    },
+    {
+      "page_id": 1176,
+      "slug": "qualification-statute",
+      "title": "نظام‌نامه اعطای صلاحیت‌های کارشناسی",
+      "type": "statute"
+    },
+    {
+      "page_id": 5570,
+      "slug": "group-presidium",
+      "title": "نظام‌نامه هیئت رئیسه گروه‌های کارشناسی",
+      "type": "statute"
+    },
+    {
+      "page_id": 4658,
+      "slug": "expert-report-guide",
+      "title": "دستورالعمل تهیه گزارش و نظریه کارشناسی",
+      "type": "directive"
+    },
+    {
+      "page_id": 1194,
+      "slug": "apprenticeship-statute",
+      "title": "نظام‌نامه کارآموزی کارشناسان",
+      "type": "statute"
+    },
+    {
+      "page_id": 1213,
+      "slug": "transfer-guide",
+      "title": "دستورالعمل نقل و انتقال کارشناسان",
+      "type": "directive"
+    },
+    {
+      "page_id": 1184,
+      "slug": "qualification-commissions",
+      "title": "نظام‌نامه کمیسیون‌های تشخیص صلاحیت علمی و فنی",
+      "type": "statute"
+    },
+    {
+      "page_id": 4441,
+      "slug": "service-fees-circular",
+      "title": "بخشنامه هزینه خدمات کانون",
+      "type": "circular"
+    },
+    {
+      "page_id": 993,
+      "slug": "expert-process-guide",
+      "title": "دستورالعمل زمان و فرآیند کارشناسی",
+      "type": "directive"
+    },
+    {
+      "page_id": 988,
+      "slug": "qualification-titles",
+      "title": "جدول عناوین صلاحیت‌های کارشناسی",
+      "type": "qualification_table"
+    },
+    {
+      "page_id": 1032,
+      "slug": "tariff-description",
+      "title": "شرح تعرفه دستمزد کارشناسی",
+      "type": "tariff"
+    }
+  ],
+  "legacy": [
+    {
+      "old_path": "/?page_id=977",
+      "new_path": "/pages/history"
+    },
+    {
+      "old_path": "/?page_id=980",
+      "new_path": "/board-members"
+    },
+    {
+      "old_path": "/?page_id=982",
+      "new_path": "/expert-groups"
+    },
+    {
+      "old_path": "/?page_id=1010",
+      "new_path": "/albums"
+    },
+    {
+      "old_path": "/?page_id=1841",
+      "new_path": "/documents?type=form"
+    },
+    {
+      "old_path": "/?page_id=1567",
+      "new_path": "/experts"
+    },
+    {
+      "old_path": "/?page_id=4109",
+      "new_path": "/agreements"
+    },
+    {
+      "old_path": "/?page_id=1034",
+      "new_path": "/tariffs/calculator"
+    },
+    {
+      "old_path": "/?page_id=2610",
+      "new_path": "/bank-accounts"
+    },
+    {
+      "old_path": "/?page_id=18",
+      "new_path": "/contact"
+    },
+    {
+      "old_path": "/?page_id=984",
+      "new_path": "/documents/experts-law"
+    },
+    {
+      "old_path": "/?page_id=986",
+      "new_path": "/documents/executive-regulation"
+    },
+    {
+      "old_path": "/?page_id=1207",
+      "new_path": "/documents/disciplinary-regulation"
+    },
+    {
+      "old_path": "/?page_id=1154",
+      "new_path": "/documents/transfer-statute"
+    },
+    {
+      "old_path": "/?page_id=1159",
+      "new_path": "/documents/geographical-scope"
+    },
+    {
+      "old_path": "/?page_id=1164",
+      "new_path": "/documents/financial-statute"
+    },
+    {
+      "old_path": "/?page_id=1176",
+      "new_path": "/documents/qualification-statute"
+    },
+    {
+      "old_path": "/?page_id=5570",
+      "new_path": "/documents/group-presidium"
+    },
+    {
+      "old_path": "/?page_id=4658",
+      "new_path": "/documents/expert-report-guide"
+    },
+    {
+      "old_path": "/?page_id=1194",
+      "new_path": "/documents/apprenticeship-statute"
+    },
+    {
+      "old_path": "/?page_id=1213",
+      "new_path": "/documents/transfer-guide"
+    },
+    {
+      "old_path": "/?page_id=1184",
+      "new_path": "/documents/qualification-commissions"
+    },
+    {
+      "old_path": "/?page_id=4441",
+      "new_path": "/documents/service-fees-circular"
+    },
+    {
+      "old_path": "/?page_id=993",
+      "new_path": "/documents/expert-process-guide"
+    },
+    {
+      "old_path": "/?page_id=988",
+      "new_path": "/documents/qualification-titles"
+    },
+    {
+      "old_path": "/?page_id=1032",
+      "new_path": "/documents/tariff-description"
+    },
+    {
+      "old_path": "/?page_id=58",
+      "new_path": "/news"
+    }
+  ],
+  "systems": [
+    [
+      "expert-portal",
+      "ورود کارشناسان و ثبت فیش",
+      "https://my.kkrm.ir/"
+    ],
+    [
+      "referral-system",
+      "سامانه ۲۰۲۰",
+      "https://2020kanoon.ir/"
+    ],
+    [
+      "virtual-training",
+      "آموزش مجازی",
+      "https://event.alocom.co/class/kkrm/webinar"
+    ],
+    [
+      "intern-portal",
+      "سامانه کارآموزان",
+      "https://karamooz.kkrm.ir/login"
+    ],
+    [
+      "judiciary",
+      "خدمات الکترونیک قضایی",
+      "https://adliran.ir/"
+    ]
+  ],
+  "useful": [
+    [
+      "leader",
+      "دفتر مقام معظم رهبری",
+      "https://khamenei.ir/"
+    ],
+    [
+      "presidency",
+      "پایگاه ریاست جمهوری",
+      "https://www.president.ir/"
+    ],
+    [
+      "parliament",
+      "مجلس شورای اسلامی",
+      "https://www.parliran.ir/"
+    ],
+    [
+      "justice-ministry",
+      "وزارت دادگستری",
+      "https://moj.gov.ir/"
+    ],
+    [
+      "mazandaran-courts",
+      "دادگستری استان مازندران",
+      "https://dadgostari-mz.eadl.ir/"
+    ],
+    [
+      "high-council",
+      "شورای عالی کارشناسان رسمی دادگستری",
+      "https://www.hcioe.org/"
+    ]
+  ]
+}
