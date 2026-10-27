@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\EnsureActiveUser;
+use App\Http\Middleware\PortalLocale;
 use App\Http\Middleware\PublicLocale;
 use App\Http\Middleware\SecurityHeaders;
 use App\Services\TranslationService;
@@ -25,9 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
         $middleware->redirectGuestsTo(fn () => '/admin/login');
-        $middleware->append(\App\Http\Middleware\PortalLocale::class);
+        $middleware->append(PortalLocale::class);
         $middleware->append([SecurityHeaders::class, PublicLocale::class]);
         $middleware->alias(['active-user' => EnsureActiveUser::class]);
     })

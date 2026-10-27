@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'public_site_url' => env('PUBLIC_SITE_URL'),
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
     'trusted_proxies' => array_values(array_filter(explode(',', env('TRUSTED_PROXIES', '')))),
     'media_disk' => env('MEDIA_DISK', 'local'),

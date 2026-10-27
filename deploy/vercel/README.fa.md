@@ -1,148 +1,110 @@
-# آماده‌سازی و استقرار Laravel Blade روی Vercel
+# استقرار بدون AWS؛ لاراول روی هاست و اتصال از Vercel
 
-این راهنما برای نسخهٔ یکپارچهٔ Laravel است. سایت و داشبورد با PHP اجرا می‌شوند؛ Node فقط CSS و JavaScript را هنگام ساخت آماده می‌کند. `Dockerfile.vercel` از Container Runtime ورسل، PHP 8.4 و Apache روی پورت 80 استفاده می‌کند.
+این روش از همان الگوی استقرار استانداری استفاده می‌کند: برنامهٔ Laravel و فایل‌های آپلودشده روی هاست لاراول هستند و Vercel به سرور برنامه متصل می‌شود. در این پروژه رابط سایت و داشبورد Blade باقی مانده‌اند؛ Vercel درخواست صفحه، API، فایل و دارایی را به Laravel می‌فرستد. React یا Next.js اضافه نشده است.
 
-دو دادهٔ مستقل لازم است: دیتابیس MySQL خارجی و فایل‌های رسانه در یک bucket خصوصی S3. وارد کردن SQL فقط رکوردها را برمی‌گرداند؛ عکس‌ها باید جدا منتقل شوند. فایل‌سیستم کانتینر محل نگهداری دائمی آپلودها نیست. این تغییرات هنوز به حساب Vercel دیپلوی نشده‌اند.
+فایل‌های کاربر در `storage` هاست لاراول می‌مانند. این روش به AWS، S3، bucket یا انتقال عکس‌ها به فضای ابری جدا نیاز ندارد. پردازش PHP داخل Vercel اجرا نمی‌شود. خاموش شدن یا خطای سرور Laravel روی سایت Vercel هم اثر می‌گذارد.
 
-## ۱. فایل‌های اصلاح‌شده را وارد پروژه کنید
+## ۱. نصب نسخهٔ Blade روی هاست Laravel
 
-فایل‌های بسته را با همان مسیرها جایگزین کنید. پوشه‌های `vendor`، `node_modules` و `.env` خودتان را نگه دارید. فایل `resources/views/.gitignore` اصلاح‌شده را نیز جایگزین کنید؛ نسخهٔ قبلی شامل `*` بود و قالب‌ها را از Git کنار می‌گذاشت.
+از دیتابیس و storage نسخهٔ پشتیبان بگیرید. سورس جدید را در ریشهٔ هاست Laravel، کنار artisan، قرار دهید. `.env`، `vendor` و فایل‌های storage موجود را حذف نکنید. وب‌سرور باید پوشهٔ public را سرو کند. خروجی `public/build` باید شامل manifest و تمام دارایی‌های متناظر آن باشد.
+
+برای ساخت دارایی‌ها روی دستگاه محلی:
 
 ```bash
-composer install
 npm ci
 npm run build
-php artisan config:clear
-php artisan view:clear
-php artisan view:cache
-php artisan route:list --path=api/v1/media
 ```
 
-در خروجی فرمان آخر باید مسیر GET و HEAD عکس‌ها وجود داشته باشد. برای مشاهدهٔ middlewareها می‌توانید `-v` اضافه کنید. قالب‌ها و فایل‌های deployment را در Git ثبت کنید. `.env`، SQL، عکس‌های خصوصی، vendor و node_modules را commit نکنید. Docker هنگام build وابستگی‌ها و `public/build` را می‌سازد.
+فایل‌های public/build ساخته‌شده را همراه سورس منتقل کنید. اگر Node روی هاست دارید، همین دو فرمان را می‌توانید آنجا اجرا کنید.
+
+روی هاست و در پوشه‌ای که artisan داخلش است:
 
 ```bash
-git status --short
-git add .
-git diff --cached --stat
-```
-
-پس از بازبینی تغییرات staged و اطمینان از نبود فایل خصوصی، خودتان commit و push کنید. اگر فایل محرمانه از قبل tracked بوده، ignore آن را حذف نمی‌کند و باید جدا از index خارج شود.
-
-## ۲. دیتابیس مقصد را مشخص کنید
-
-در پنل چابوکان، وارد سرویس MySQL مورد نظر شوید و اطلاعات اتصال خارجی و نام دیتابیس را بخوانید. Host داخلی، localhost و 127.0.0.1 برای اتصال Vercel به دیتابیس چابوکان مناسب نیستند. `DB_PORT` نیز پورت بیرونی همان سرویس است، نه لزوماً 3306.
-
-اگر به همان دیتابیس قبلی متصل می‌شوید، دوباره SQL را وارد نکنید. اگر دیتابیس جدید است، بکاپ را در دیتابیس خالی import کنید و سپس این فرمان‌ها را روی دستگاه خودتان با `.env` متصل به همان دیتابیس اجرا کنید:
-
-```bash
-php artisan config:clear
-php artisan migrate:status
+mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+composer install --no-dev --optimize-autoloader
 php artisan migrate --force
+php artisan optimize:clear
+php artisan optimize
+php artisan media:audit --verify
 ```
 
-برای دیتابیس قبلی `APP_KEY` قبلی را نگه دارید. `key:generate`، `migrate:fresh` و DemoSeeder لازم نیستند. در این بسته build و startup هیچ migration یا seeder اجرا نمی‌کنند. برای دیتابیس کاملاً تازه و بدون بکاپ، SiteStructureSeeder و `app:create-admin` را فقط یک بار طبق README اصلی اجرا کنید.
+برنامه با PHP 8.3 یا جدیدتر و افزونه‌های موردنیاز composer.json اجرا می‌شود. پوشه‌های storage و bootstrap/cache باید برای کاربر PHP قابل نوشتن باشند. دادهٔ واقعی را با migrate:fresh یا DemoSeeder جایگزین نکنید.
 
-## ۳. فضای فایل دائمی و عکس‌های قبلی
+## ۲. تنظیمات روی هاست Laravel
 
-یک bucket خصوصی سازگار با S3 در سرویس ذخیره‌سازی خودتان آماده کنید. این مخزن باید از محل اجرای ورسل قابل دسترسی باشد. کلید محدود به همان bucket با امکان خواندن، نوشتن و بررسی فایل‌ها کافی است. bucket را عمومی نکنید؛ عکس‌ها با همان مسیر امن لاراول نمایش داده می‌شوند.
+نمونهٔ کامل: `.env.production.example`. APP_KEY و DB_* همان مقادیر واقعی هاست فعلی باشند. این بخش‌ها را متناسب با دامنه‌ها تنظیم کنید:
 
-اطلاعات AWS جدول پایین را در `.env` محلی دستگاهی که عکس‌ها را دارد وارد کنید. دیتابیس همان دیتابیس مقصد باشد. بعد از گرفتن backup، [راهنمای رسانه](../../docs/MEDIA.fa.md) را اجرا کنید:
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://laravel-q2yx48.chbkn.dev
+PUBLIC_SITE_URL=https://kkrm-laravel.vercel.app
+FRONTEND_URL=https://kkrm-laravel.vercel.app
+CORS_ALLOWED_ORIGINS=https://kkrm-laravel.vercel.app
+SANCTUM_STATEFUL_DOMAINS=kkrm-laravel.vercel.app,laravel-q2yx48.chbkn.dev
+
+SESSION_DRIVER=database
+SESSION_ENCRYPT=true
+SESSION_DOMAIN=null
+SESSION_SECURE_COOKIE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=lax
+
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+FILESYSTEM_DISK=local
+MEDIA_DISK=local
+LOG_CHANNEL=stack
+LOG_STACK=daily
+```
+
+آدرس‌ها را با آدرس واقعی پروژه عوض کنید. PUBLIC_SITE_URL باید روی هاست و Vercel یکسان باشد. در درخواست پراکسی که علامت origin شناخته‌شده را داشته باشد، Laravel لینک‌ها و redirectها را با همین مبدأ عمومی می‌سازد تا کاربر در دامنهٔ سایت بماند. علامت پراکسی هیچ نقشی در احراز هویت یا اجازهٔ دسترسی فایل ندارد و فقط مبدأ تولید URL را تعیین می‌کند.
+
+در اجرای local، PUBLIC_SITE_URL را خالی بگذارید و APP_ENV=local و APP_URL=http://127.0.0.1:8000 و SESSION_SECURE_COOKIE=false باشند.
+
+پس از تغییر env روی هاست:
 
 ```bash
 php artisan config:clear
-php artisan media:audit --verify
-php artisan media:transfer --from=local --to=s3
-php artisan media:transfer --from=local --to=s3 --apply
-php artisan media:audit --verify
+php artisan config:cache
 ```
 
-فرمان بدون `--apply` فقط بررسی می‌کند. فرمان دارای `--apply` فایل را کپی و هش آن را تأیید می‌کند؛ سپس disk همان رکورد را به s3 تغییر می‌دهد و اصل فایل را نگه می‌دارد. اگر مسیر فایل‌های قدیمی متفاوت است از `--source-root` طبق راهنمای رسانه استفاده کنید. انتقال باید روی دستگاهی انجام شود که عکس‌ها واقعاً در آن وجود دارند؛ Vercel پوشهٔ storage دستگاه شما را نمی‌بیند.
+نشانی‌های `/`، `/admin/login` و `/up` باید روی خود سرور Laravel پاسخ درست داشته باشند. موفق بودن `/up` به‌تنهایی به معنی نصب قالب Blade نیست. اگر `/admin/login` روی خود سرور 404 باشد، Vercel آن صفحه را ایجاد نمی‌کند.
 
-اگر سایت قبلی هم‌زمان از همین دیتابیس استفاده می‌کند، تغییر disk روی آن سایت هم اثر می‌گذارد. ابتدا تنظیمات و درایور S3 را در برنامهٔ قبلی نیز آماده کنید، یا انتقال آزمایشی را روی یک کپی جدا از دیتابیس انجام دهید.
+## ۳. تنظیمات Vercel
 
-## ۴. متغیرهای Vercel
+ریپازیتوری `AmirRiahi2008/kkrm-laravel` و شاخهٔ master را متصل کنید. Root Directory برابر `./` و Framework برابر Other باشد. vercel.json این تنظیمات را دارد:
 
-در Project → Settings → Environment Variables ثبت کنید. فایل `.env.vercel.example` فهرست آمادهٔ بدون رمز است. مقدار placeholder یا عبارت فارسی جدول را عیناً به‌جای مقدار واقعی وارد نکنید.
+- installCommand: `node --version`
+- buildCommand: `node deploy/vercel/build.mjs`
+- هیچ Output Directory override لازم نیست؛ Build Output API استفاده می‌شود.
 
-| نام | مقدار | Type |
-| --- | --- | --- |
-| APP_NAME | KKRM Portal | Config |
-| APP_ENV | production | Config |
-| APP_DEBUG | false | Config |
-| APP_KEY | همان کلید واقعی برنامهٔ قبلی | Secret |
-| APP_URL | آدرس HTTPS نهایی همین پروژه؛ مثلاً https://YOUR-PROJECT.vercel.app | Config |
-| APP_LOCALE | fa | Config |
-| APP_FALLBACK_LOCALE | en | Config |
-| DB_CONNECTION | mysql | Config |
-| DB_HOST | Host خارجی سرویس MySQL چابوکان | Config |
-| DB_PORT | پورت خارجی همان سرویس | Config |
-| DB_DATABASE | نام دیتابیس واقعی | Config |
-| DB_USERNAME | نام کاربر همان دیتابیس | Config |
-| DB_PASSWORD | رمز همان کاربر | Secret |
-| DB_CHARSET | utf8mb4 | Config |
-| DB_COLLATION | utf8mb4_unicode_ci | Config |
-| SESSION_DRIVER | database | Config |
-| SESSION_LIFETIME | 60 | Config |
-| SESSION_ENCRYPT | true | Config |
-| SESSION_DOMAIN | null | Config |
-| SESSION_SECURE_COOKIE | true | Config |
-| SESSION_HTTP_ONLY | true | Config |
-| SESSION_SAME_SITE | lax | Config |
-| CACHE_STORE | database | Config |
-| QUEUE_CONNECTION | sync | Config |
-| FILESYSTEM_DISK | s3 | Config |
-| MEDIA_DISK | s3 | Config |
-| MEDIA_MAX_KB | 3840 | Config |
-| MEDIA_LEGACY_ORIGINS | https://kkrm.vercel.app,https://laravel-q2yx48.chbkn.dev | Config |
-| AWS_ACCESS_KEY_ID | Access Key مخزن فایل | Secret |
-| AWS_SECRET_ACCESS_KEY | Secret Key مخزن فایل | Secret |
-| AWS_BUCKET | نام bucket خصوصی | Config |
-| AWS_DEFAULT_REGION | region اعلام‌شده توسط سرویس فایل | Config |
-| AWS_ENDPOINT | نشانی HTTPS سرویس S3؛ برای AWS اصلی تنظیم نشود | Config |
-| AWS_USE_PATH_STYLE_ENDPOINT | برای سرویس‌های سازگار معمولاً true؛ مطابق مستندات همان سرویس | Config |
-| LOG_CHANNEL | stderr | Config |
-| LOG_LEVEL | warning | Config |
-| BCRYPT_ROUNDS | 12 | Config |
-| MAIL_MAILER | برای شروع log؛ برای ارسال واقعی SMTP یا mailer تنظیم شود | Config |
-| MAIL_FROM_ADDRESS | نشانی فرستندهٔ تأییدشدهٔ خودتان | Config |
-| MAIL_FROM_NAME | KKRM | Config |
-| CLAMAV_ENABLED | false | Config |
-| CONTACT_RETENTION_DAYS | 180 | Config |
-| AUDIT_RETENTION_DAYS | 365 | Config |
+فقط دو متغیر Config برای Production لازم است:
 
-`FRONTEND_URL`، `CORS_ALLOWED_ORIGINS` و hostname فعلی Sanctum هنگام شروع کانتینر از APP_URL ساخته می‌شوند. در Preview، آدرس همان deployment از VERCEL_URL گرفته می‌شود. `TRUSTED_PROXIES` را بدون اطلاعات معتبر از زیرساخت، `*` نگذارید. `ASSET_URL`، `API_URL`، `NEXT_PUBLIC_API_URL` و `SITE_URL` لازم نیستند و تنظیمات باقی‌ماندهٔ Next.js را برای این برنامه وارد نکنید. `APP_DOWNLOAD_URL` اختیاری است و می‌تواند فعلاً تعریف نشود.
+```dotenv
+LARAVEL_ORIGIN=https://laravel-q2yx48.chbkn.dev
+PUBLIC_SITE_URL=https://kkrm-laravel.vercel.app
+```
 
-برای Production متغیرها را در محیط Production ثبت کنید. برای Preview بهتر است یک کپی دیتابیس و فضای فایل آزمایشی استفاده کنید، چون تغییرات داشبورد Preview در هر دیتابیسی که تنظیم کنید واقعاً ذخیره می‌شوند. Secretهای دیتابیس و فایل را داخل سورس یا متغیرهای `VITE_*` نگذارید.
+LARAVEL_ORIGIN باید origin HTTPS هاست Laravel و بدون `/api/v1`، مسیر، query یا اطلاعات ورود باشد. PUBLIC_SITE_URL باید دامنهٔ نهایی عمومی Vercel یا دامنهٔ اختصاصی باشد. این دو آدرس نباید یکی باشند، چون حلقهٔ پراکسی ایجاد می‌شود. رمز دیتابیس، APP_KEY و کلید فضای فایل در Vercel لازم نیستند.
 
-## ۵. Import و Deploy در Vercel
+فایل build.mjs تنظیم `.vercel/output/config.json` را تولید می‌کند. تمام مسیرها با حفظ path به سرور Laravel بازنویسی می‌شوند و هدر مبدأ عمومی تنظیم می‌شود. کش پراکسی برای شروع خاموش است تا پاسخ نشست و داشبورد مشترک cache نشود. فایل‌های محلی private، vendor و دیتابیس همراه این پراکسی به Vercel منتقل نمی‌شوند.
 
-۱. Add New → Project و ریپازیتوری `AmirRiahi2008/kkrm-laravel` را انتخاب کنید.
-۲. Root Directory برابر ریشه‌ای باشد که artisan و Dockerfile.vercel داخل آن هستند؛ در این ریپازیتوری `./` است، نه public.
-۳. Framework Preset را Container انتخاب کنید. اگر پروژهٔ قبلی Next.js را استفاده می‌کنید، preset و overrideهای قدیمی Install/Build/Output Directory را پاک کنید.
-۴. Install Command، Build Command و Output Directory را override نکنید؛ Dockerfile ساخت PHP و دارایی‌ها را انجام می‌دهد.
-۵. متغیرهای مرحلهٔ قبل را ذخیره کنید و Deploy بزنید. `vercel.json` منطقه را fra1 قرار داده است؛ در صورت نیاز و پشتیبانی حساب، نزدیک‌ترین منطقهٔ قابل اتصال به دیتابیس را انتخاب کنید.
-۶. پس از دریافت آدرس نهایی Production، APP_URL را همان origin بدون مسیر اضافه تنظیم و Redeploy کنید. با تغییر متغیرها حتماً deployment جدید بسازید.
+پس از تغییر متغیرها Redeploy کنید. اگر دامنهٔ عمومی تغییر کرد، PUBLIC_SITE_URL، FRONTEND_URL و دامنهٔ مجاز روی هاست نیز به‌روزرسانی شوند.
 
-Vercel باید Dockerfile.vercel را تشخیص دهد. این روش به پکیج community PHP runtime و فایل api/index.php نیاز ندارد. پردازش HTTP در کانتینر روی پورت 80 است. فایل‌های موقت، کش قالب و تنظیمات لاراول در `/tmp/kkrm` هستند؛ session و cache مشترک روی MySQL و رسانه‌ها روی S3 باقی می‌مانند. لاگ در Runtime Logs ورسل دیده می‌شود.
+## ۴. بررسی نهایی
 
-## ۶. بررسی پس از Deploy
+صفحهٔ اصلی، انگلیسی، کارشناسان، خبر واقعی، تصویر واقعی و `/admin/login` را باز کنید. وارد داشبورد شوید، فهرست‌ها را باز کنید، عکس کوچک آپلود و مطلبی را ذخیره کنید. عکس باید پس از Redeploy ورسل نیز باقی بماند، چون روی هاست Laravel ذخیره شده است.
 
-این نشانی‌ها را باز کنید:
+APIهای مدیریت middleware نشست و CSRF مستقل دارند؛ دریافت فهرست و عکس خصوصی به ارسال Referer مرورگر وابسته نیست. احراز هویت، نقش‌ها، session_version و اجازهٔ دسترسی رسانه همچنان در Laravel بررسی می‌شوند.
 
-- `/up` برای اجرای برنامه؛ این مسیر به‌تنهایی سلامت دیتابیس یا bucket را تضمین نمی‌کند.
-- `/`، `/en`، `/news`، `/experts` و جزئیات یک خبر واقعی.
-- `/api/v1/media/شناسه` برای تصویر استفاده‌شده در محتوای منتشرشده.
-- `/admin/login` و سپس پیش‌نمایش یک عکس تازه و خصوصی در داشبورد.
+اگر Laravel خطای 500 داد، فایل لاگ روز در storage/logs را بررسی کنید. برای 404، route و نصب قالب‌های Blade روی هاست را بررسی کنید. برای مشکل فایل، [راهنمای رسانه](../../docs/MEDIA.fa.md) را اجرا کنید. ایمیل واقعی و صف همچنان باید روی هاست Laravel تنظیم شوند.
 
-یک تصویر کوچک و یک PDF کوچک آپلود کنید، ذخیرهٔ مطلب و نمایش آن در سایت را بررسی کنید و یک Redeploy انجام دهید. رسانه باید بعد از Redeploy هم باقی بماند. محتوای cache‌شده و خطاهای ذخیره‌سازی را با Network مرورگر و Runtime Logs بررسی کنید. حالت Ready صرفاً تکمیل استقرار است.
+## وضعیت سرور هنگام آماده‌سازی
 
-حد فایل در این تنظیمات ۳۸۴۰ کیلوبایت است تا درخواست multipart زیر محدودیت payload ورسل باقی بماند. بارگذاری PDF یا تصویر بزرگ‌تر در این نسخه پشتیبانی نمی‌شود؛ برای فایل بزرگ باید آپلود مستقیم امن به فضای فایل جداگانه پیاده شود.
+در بررسی عمومی ۲۷ اکتبر ۲۰۲۶، سرور laravel-q2yx48.chbkn.dev در `/up` پاسخ 200 داشت اما `/` و `/admin/login` پاسخ 404 دادند. بنابراین برای کامل شدن سایت، نسخهٔ جدید Blade باید روی آن سرویس نصب شود. نشانی kkrm.irancompile.com در همان بررسی پاسخ 500 داشت. این گزارش به معنی رفع خطای آن هاست‌ها یا نصب خودکار فایل‌ها روی آن‌ها نیست.
 
-صف در این استقرار sync است و Supervisor اجرا نمی‌شود. وظیفهٔ روزانهٔ `app:prune-private-data` با صرف Deploy خودبه‌خود اجرا نمی‌شود؛ برای اجرای دوره‌ای آن scheduler خارجی یا endpoint محافظت‌شدهٔ مخصوص Cron لازم است. با `MAIL_MAILER=log` نیز ایمیل بازیابی رمز ارسال واقعی ندارد؛ برای بهره‌برداری، سرویس ایمیل واقعی را تنظیم کنید.
+## مستندات رسمی
 
-## منابع رسمی
-
-- https://vercel.com/docs/functions/runtimes/container
-- https://vercel.com/docs/environment-variables
-- https://vercel.com/docs/functions/limitations
-- https://laravel.com/docs/13.x/filesystem
+- https://vercel.com/docs/routing/rewrites
+- https://vercel.com/docs/build-output-api/configuration

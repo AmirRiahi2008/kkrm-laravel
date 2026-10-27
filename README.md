@@ -94,7 +94,9 @@ php artisan queue:restart
 
 ## آماده‌سازی Vercel
 
-فایل‌های اجرای Container در `Dockerfile.vercel` و `deploy/vercel` موجودند. راهنمای مرحله‌به‌مرحله و نوع تمام متغیرها در [deploy/vercel/README.fa.md](deploy/vercel/README.fa.md) است. کانتینر PHP 8.4 و Apache اجرا می‌کند و دارایی‌ها را هنگام build می‌سازد؛ نیازی به Next.js، پروکسی `/backend` یا اجرای Node پس از build نیست. اتصال دیتابیس خارجی و فضای فایل خصوصی S3 باید پیش از استقرار تنظیم شوند. build و startup هیچ migrate یا seeder اجرا نمی‌کنند.
+در روش فعلی، Laravel، Blade، MySQL و فایل‌های `storage` روی هاست لاراول اجرا می‌شوند و Vercel درخواست‌ها را به همان برنامه می‌فرستد. این روش به AWS یا S3 نیاز ندارد. تمام رابط سایت و داشبورد همچنان Blade است و Next.js اضافه نشده است. راهنمای کامل در [deploy/vercel/README.fa.md](deploy/vercel/README.fa.md) قرار دارد.
+
+در Vercel فقط دو مقدار Config لازم است: `LARAVEL_ORIGIN` برای آدرس HTTPS سرور لاراول و `PUBLIC_SITE_URL` برای آدرس نهایی سایت. رمز دیتابیس و APP_KEY فقط روی هاست لاراول می‌مانند. `vercel.json` و `deploy/vercel/build.mjs` مسیرهای پراکسی را می‌سازند. نمونهٔ تنظیمات هاست: `.env.production.example`؛ نمونهٔ تنظیمات ورسل: `.env.vercel.example`.
 
 ## بررسی و انتقال عکس‌ها
 
@@ -105,6 +107,6 @@ php artisan config:clear
 php artisan media:audit --verify
 ```
 
-این فرمان فقط می‌خواند و فایل‌ها و دیتابیس را تغییر نمی‌دهد. برای اصلاح محل فایل‌ها، انتقال تأییدشده به S3 و توضیح `--source-root`، [راهنمای رسانه](docs/MEDIA.fa.md) را ببینید.
+این فرمان فقط می‌خواند و فایل‌ها و دیتابیس را تغییر نمی‌دهد. برای اصلاح محل فایل‌ها و توضیح `--source-root`، [راهنمای رسانه](docs/MEDIA.fa.md) را ببینید. در روش فعلی، فایل‌ها در storage همان هاست لاراول باقی می‌مانند و به سرویس دیگری منتقل نمی‌شوند.
 
 قالب‌های Blade باید در Git ثبت باشند؛ `resources/views/.gitignore` نباید شامل `*` باشد. نسخهٔ اصلاح‌شده ۳۶ فایل قالب را بازیابی می‌کند. فایل‌های خصوصی `storage` را در ریپازیتوری عمومی commit نکنید.

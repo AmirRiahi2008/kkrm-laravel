@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function (): void {
         Route::get('{resource}', [PublicContentController::class, 'index'])->whereIn('resource', ['posts', ...ContentCatalog::PUBLIC_RESOURCES]);
         Route::get('{resource}/{key}', [PublicContentController::class, 'show'])->whereIn('resource', ['posts', ...ContentCatalog::PUBLIC_RESOURCES]);
     });
-    Route::prefix('admin')->middleware(['auth:sanctum', 'active-user', 'throttle:admin-api'])->group(function (): void {
+    Route::prefix('admin')->middleware(['web', 'auth:sanctum', 'active-user', 'throttle:admin-api'])->group(function (): void {
         Route::get('notifications', [Admin\NotificationController::class, 'index']);
         Route::patch('notifications/read-all', [Admin\NotificationController::class, 'readAll']);
         Route::patch('notifications/{id}/read', [Admin\NotificationController::class, 'read'])->whereUuid('id');

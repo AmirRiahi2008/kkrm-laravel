@@ -14,7 +14,7 @@ use Throwable;
 
 final class TransferMedia extends Command
 {
-    protected $signature = 'media:transfer {--from=local} {--to=s3} {--source-root=} {--id=*} {--apply}';
+    protected $signature = 'media:transfer {--from=local} {--to=local} {--source-root=} {--id=*} {--apply}';
 
     protected $description = 'Copy and verify media before updating disk references; dry run unless --apply is supplied';
 

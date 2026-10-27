@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "container",
-  "regions": ["fra1"]
+  "framework": null,
+  "installCommand": "node --version",
+  "buildCommand": "node deploy/vercel/build.mjs"
 }

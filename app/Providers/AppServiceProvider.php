@@ -14,13 +14,16 @@ use App\Models\User;
 use App\Observers\ContentObserver;
 use App\Policies\PostPolicy;
 use App\Support\ContentCatalog;
+use App\Support\Portal;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Sanctum\Sanctum;
@@ -29,7 +32,16 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        \Illuminate\Foundation\AliasLoader::getInstance()->alias('P', \App\Support\Portal::class);
+        $publicOrigin = rtrim((string) config('kkrm.public_site_url'), '/');
+        if (app()->environment('production') && ! app()->runningInConsole() && $publicOrigin !== '' && request()->header('X-KKRM-Public-Origin') === $publicOrigin) {
+            $parts = parse_url($publicOrigin);
+            if (! is_array($parts) || ($parts['scheme'] ?? '') !== 'https' || empty($parts['host']) || isset($parts['user']) || isset($parts['pass']) || isset($parts['query']) || isset($parts['fragment']) || ! empty($parts['path'])) {
+                throw new \LogicException('PUBLIC_SITE_URL must be a valid HTTPS origin.');
+            }
+            URL::forceRootUrl($publicOrigin);
+            URL::forceScheme('https');
+        }
+        AliasLoader::getInstance()->alias('P', Portal::class);
         Sanctum::getAccessTokenFromRequestUsing(fn () => null);
         Model::preventSilentlyDiscardingAttributes();
         DB::prohibitDestructiveCommands(app()->environment('production'));
