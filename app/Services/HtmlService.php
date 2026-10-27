@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Support\MediaUrl;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
@@ -43,6 +44,12 @@ final class HtmlService
             ->dropElement('video')
             ->dropElement('audio');
 
-        return (new HtmlSanitizer($config))->sanitize(str_replace('/backend/api/v1/media/', '/api/v1/media/', $html));
+        $clean = (new HtmlSanitizer($config))->sanitize($html);
+
+        return preg_replace_callback('~\b(src|href)="([^"]*)"~i', function (array $matches): string {
+            $relative = MediaUrl::relative($matches[2]);
+
+            return $relative !== null ? $matches[1].'="'.$relative.'"' : $matches[0];
+        }, $clean);
     }
 }

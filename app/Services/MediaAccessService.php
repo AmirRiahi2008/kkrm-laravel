@@ -9,6 +9,7 @@ use App\Models\Media;
 use App\Models\Post;
 use App\Models\Setting;
 use App\Support\ContentCatalog;
+use App\Support\MediaUrl;
 use DOMDocument;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -232,17 +233,7 @@ final class MediaAccessService
             $pdf = $media->mime_type === 'application/pdf';
             foreach ($document->getElementsByTagName($pdf ? 'a' : 'img') as $element) {
                 $url = $element->getAttribute($pdf ? 'href' : 'src');
-                if ($pdf && ! $this->localMediaLink($url)) {
-                    continue;
-                }
-                $path = parse_url($url, PHP_URL_PATH);
-
-                if (
-                    in_array($path, [
-                        '/api/v1/media/'.$media->id,
-                        '/backend/api/v1/media/'.$media->id,
-                    ], true)
-                ) {
+                if (MediaUrl::relative($url) === '/api/v1/media/'.$media->id) {
                     return true;
                 }
             }
@@ -252,37 +243,5 @@ final class MediaAccessService
             libxml_clear_errors();
             libxml_use_internal_errors($previous);
         }
-    }
-
-    private function localMediaLink(string $url): bool
-    {
-        if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
-            return true;
-        }
-        $parts = parse_url($url);
-        if (
-            ! is_array($parts)
-            || ! isset($parts['scheme'], $parts['host'])
-            || isset($parts['user'])
-            || isset($parts['pass'])
-        ) {
-            return false;
-        }
-        foreach ([config('app.url'), config('kkrm.frontend_url')] as $origin) {
-            $allowed = parse_url((string) $origin);
-            if (! is_array($allowed) || ! isset($allowed['scheme'], $allowed['host'])) {
-                continue;
-            }
-            $port = $parts['port'] ?? ($parts['scheme'] === 'https' ? 443 : 80);
-            $allowedPort = $allowed['port'] ?? ($allowed['scheme'] === 'https' ? 443 : 80);
-            if (
-                strtolower($parts['scheme']) === strtolower($allowed['scheme'])
-                && strtolower($parts['host']) === strtolower($allowed['host'])
-                && $port === $allowedPort
-            ) {
-                return true;
-            }
-        }
-        return false;
     }
 }

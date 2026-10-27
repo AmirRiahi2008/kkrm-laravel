@@ -23,7 +23,6 @@ Route::prefix('v1')->group(function (): void {
         Route::get('search', [SiteController::class, 'search'])->middleware('throttle:search');
         Route::get('redirects/resolve', [SiteController::class, 'resolveRedirect']);
         Route::get('seo/sitemap', [SiteController::class, 'sitemap']);
-        Route::get('media/{media}', [MediaController::class, 'show'])->whereNumber('media');
         Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:contact');
         Route::post('tariffs/calculate', [TariffController::class, 'calculate'])->middleware('throttle:search');
         Route::get('{resource}', [PublicContentController::class, 'index'])->whereIn('resource', ['posts', ...ContentCatalog::PUBLIC_RESOURCES]);

@@ -1,8 +1,9 @@
 *.log
 .DS_Store
-.env
-.env.backup
-.env.production
+/.env*
+!/.env.example
+!/.env.production.example
+!/.env.vercel.example
 .phpactor.json
 /.codex
 /.cursor/
@@ -25,6 +26,8 @@ Homestead.yaml
 Thumbs.db
 bootstrap/cache/*.php
 storage/app/private/*
+*.sql
+*.sql.gz
 !.env.production.example
 /.vercel
 

@@ -1,0 +1,1 @@
+<div class="page-title"><a href="{{ P::url('/') }}">{{ P::t('صفحه اصلی') }}</a><span> / </span><span>{{ $label }}</span><h1>{{ $label }}</h1></div>

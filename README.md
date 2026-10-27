@@ -94,4 +94,17 @@ php artisan queue:restart
 
 ## آماده‌سازی Vercel
 
-فایل‌های اجرای Container در `Dockerfile.vercel` و `deploy/vercel` موجودند. راهنمای متغیرهای دیتابیس و فضای فایل در `deploy/vercel/README.fa.md` است. فایل‌های اجرای ورسل اختیاری هستند. ادامهٔ دیپلوی به درخواست کاربر متوقف شده است؛ این بسته برای اجرای مستقل لاراول نیز قابل استفاده است. این کانتینر فقط ورودی HTTPS ورسل را فرض می‌کند.
+فایل‌های اجرای Container در `Dockerfile.vercel` و `deploy/vercel` موجودند. راهنمای مرحله‌به‌مرحله و نوع تمام متغیرها در [deploy/vercel/README.fa.md](deploy/vercel/README.fa.md) است. کانتینر PHP 8.4 و Apache اجرا می‌کند و دارایی‌ها را هنگام build می‌سازد؛ نیازی به Next.js، پروکسی `/backend` یا اجرای Node پس از build نیست. اتصال دیتابیس خارجی و فضای فایل خصوصی S3 باید پیش از استقرار تنظیم شوند. build و startup هیچ migrate یا seeder اجرا نمی‌کنند.
+
+## بررسی و انتقال عکس‌ها
+
+در نسخهٔ گیت‌هاب مبنا (`51a066b8e3cba1aa4564fa0fd20d6c2c2e9034ee`) هیچ فایل رسانه‌ای زیر `storage` ثبت نشده بود. وجود رکورد در جدول `media` به معنای همراه بودن فایل عکس با SQL یا Git نیست. مسیر پیش‌فرض فایل با `disk=local`، برابر `storage/app/private/` به‌علاوهٔ مقدار `media.path` است. `storage:link` فقط دیسک public را لینک می‌کند. عکس‌های خصوصی و عمومی این برنامه از `/api/v1/media/{id}` با کنترل دسترسی سرو می‌شوند.
+
+```bash
+php artisan config:clear
+php artisan media:audit --verify
+```
+
+این فرمان فقط می‌خواند و فایل‌ها و دیتابیس را تغییر نمی‌دهد. برای اصلاح محل فایل‌ها، انتقال تأییدشده به S3 و توضیح `--source-root`، [راهنمای رسانه](docs/MEDIA.fa.md) را ببینید.
+
+قالب‌های Blade باید در Git ثبت باشند؛ `resources/views/.gitignore` نباید شامل `*` باشد. نسخهٔ اصلاح‌شده ۳۶ فایل قالب را بازیابی می‌کند. فایل‌های خصوصی `storage` را در ریپازیتوری عمومی commit نکنید.

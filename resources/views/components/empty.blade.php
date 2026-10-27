@@ -1,0 +1,1 @@
+<div class="empty-state"><span aria-hidden="true">◇</span><p>{{ P::t($message??'موردی برای نمایش وجود ندارد.') }}</p></div>

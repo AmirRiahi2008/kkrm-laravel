@@ -30,7 +30,8 @@ Route::middleware(['auth:web', 'active-user'])->group(function (): void {
     Route::get('/admin/{resource}/{action?}', [ManagementController::class, 'resource'])->where('action', 'new|[0-9]+');
 });
 Route::get('/manifest.webmanifest', fn () => response()->json(['id' => '/', 'name' => 'کانون کارشناسان رسمی دادگستری مازندران', 'short_name' => 'کانون مازندران', 'start_url' => '/', 'scope' => '/', 'display' => 'standalone', 'dir' => 'rtl', 'lang' => 'fa', 'theme_color' => '#00477a', 'background_color' => '#f5f8fb', 'icons' => [['src' => '/pwa/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png'], ['src' => '/pwa/icon-512.png', 'sizes' => '512x512', 'type' => 'image/png']]])->header('Content-Type', 'application/manifest+json'));
-Route::get('/backend/api/v1/media/{media}', [MediaController::class, 'show'])->whereNumber('media');
+Route::get('/api/v1/media/{media}', [MediaController::class, 'show'])->whereNumber('media')->middleware('throttle:public-api');
+Route::get('/backend/api/v1/media/{media}', [MediaController::class, 'show'])->whereNumber('media')->middleware('throttle:public-api');
 Route::get('/robots.txt', fn () => response("User-agent: *\nDisallow: /admin\nDisallow: /api\nSitemap: ".url('/sitemap.xml')."\n")->header('Content-Type', 'text/plain'));
 Route::get('/sitemap.xml', function () {
     $entries = app()->call([app(SiteController::class), 'sitemap'])->getData(true)['data'];

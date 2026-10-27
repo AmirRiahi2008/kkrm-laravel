@@ -8,7 +8,7 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app/private'),
+            'root' => env('MEDIA_LOCAL_ROOT') ?: storage_path('app/private'),
             'serve' => false,
             'throw' => false,
             'report' => false,
@@ -16,7 +16,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => env('MEDIA_PUBLIC_ROOT') ?: storage_path('app/public'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
@@ -32,7 +32,8 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'http' => ['connect_timeout' => 10, 'timeout' => 60],
+            'throw' => true,
             'report' => false,
         ],
 
