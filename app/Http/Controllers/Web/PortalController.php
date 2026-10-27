@@ -44,7 +44,7 @@ final class PortalController
     public function page(Request $request, ?string $path = null)
     {
         $this->shell();
-        $path = preg_replace('#^en/?#', '', $request->path());
+        $path = preg_replace('#^en(?:/|$)#', '', $request->decodedPath());
         $segments = explode('/', trim($path, '/'));
         $resource = $segments[0];
         $key = $segments[1] ?? null;
