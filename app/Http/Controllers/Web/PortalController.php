@@ -125,7 +125,7 @@ final class PortalController
 
             return view('site.detail', compact('item', 'resource', 'related', 'relatedResource', 'relatedLabel', 'relatedQuery'));
         }
-        $filters = $request->validate((new IndexRequest)->rules());
+        $filters = $request->validate(IndexRequest::createFrom($request)->rules());
         if ($resource === 'articles') {
             $filters['type'] = 'article';
         }

@@ -306,7 +306,11 @@ export function registerManagement(Alpine, helpers) {
         },
         async save(preview = false) {
             if (this.busy || this.uploads > 0) return;
-            if(this.$el.querySelector(".admin-jalali-field[data-invalid]")) {this.error="تاریخ و ساعت را کامل و معتبر وارد کنید.";return;}
+            const dates = this.$el.querySelectorAll(".admin-jalali-field");
+            if (Array.from(dates).some((field) => !Alpine.$data(field).commitParts())) {
+                this.error = "تاریخ و ساعت را کامل و معتبر وارد کنید.";
+                return;
+            }
             this.busy = true;
             this.errors = {};
             this.error = "";

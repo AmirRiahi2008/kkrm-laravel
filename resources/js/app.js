@@ -406,11 +406,14 @@ Alpine.data("jalaliField", (key, withTime) => ({
     commitParts() {
         this.dateError = '';
         const p = Object.fromEntries(Object.entries(this.parts).map(([key,value])=>[key,digits(value)]));
-        if (!p.y && !p.m && !p.d) { this.values[key] = null; return; }
+        if (!p.y && !p.m && !p.d && (!withTime || (!p.h && !p.i))) {
+            this.values[key] = null;
+            return true;
+        }
         if (!p.y || !p.m || !p.d || !jalaali.isValidJalaaliDate(+p.y,+p.m,+p.d) ||
             (withTime && (!/^\d{1,2}$/.test(p.h) || !/^\d{1,2}$/.test(p.i) || +p.h>23 || +p.i>59))) {
             this.dateError = 'تاریخ و ساعت را کامل و معتبر وارد کنید.';
-            return;
+            return false;
         }
         const g = jalaali.toGregorian(+p.y,+p.m,+p.d);
         const date = [g.gy,String(g.gm).padStart(2,'0'),String(g.gd).padStart(2,'0')].join('-');
@@ -418,6 +421,7 @@ Alpine.data("jalaliField", (key, withTime) => ({
         this.year = +p.y;
         this.mon = +p.m;
         this.render();
+        return true;
     },
     toggleCalendar() { this.opened = !this.opened; this.render(); },
     render() {
