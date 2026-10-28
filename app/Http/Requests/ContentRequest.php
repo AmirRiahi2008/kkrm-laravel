@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Rules\DatabaseDate;
 use App\Rules\SafePagePath;
 use App\Rules\SafeUrl;
 use App\Services\TranslationService;
@@ -159,6 +160,12 @@ final class ContentRequest extends FormRequest
         if (in_array('meta_title', $fields, true)) {
             $rules['meta_title'] = ['sometimes', 'nullable', 'string', 'max:250'];
             $rules['meta_description'] = ['sometimes', 'nullable', 'string', 'max:500'];
+        }
+
+        foreach ($rules as $field => $constraints) {
+            if (in_array('date', $constraints, true)) {
+                $rules[$field][] = new DatabaseDate;
+            }
         }
 
         return $rules + TranslationService::rules(ContentCatalog::model($resource));

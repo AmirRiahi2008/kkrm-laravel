@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Models\Post;
+use App\Rules\DatabaseDate;
 use App\Services\TranslationService;
 use App\Support\ContentTypes;
 use Illuminate\Foundation\Http\FormRequest;
@@ -36,8 +37,8 @@ final class PostRequest extends FormRequest
             'tag_ids.*' => ['integer', 'distinct', Rule::exists('tags', 'id')->whereNull('deleted_at')],
             'attachment_ids' => ['sometimes', 'array', 'max:20'],
             'attachment_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')],
-            'published_at' => ['sometimes', 'nullable', 'date'],
-            'expires_at' => ['sometimes', 'nullable', 'date'],
+            'published_at' => ['sometimes', 'nullable', 'date', new DatabaseDate],
+            'expires_at' => ['sometimes', 'nullable', 'date', new DatabaseDate],
             'is_featured' => ['sometimes', 'boolean'],
             'is_pinned' => ['sometimes', 'boolean'],
             'show_in_slideshow' => $this->user()?->role->managesContent() ? ['sometimes', 'boolean'] : ['prohibited'],
