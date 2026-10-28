@@ -403,7 +403,8 @@ Alpine.data("jalaliField", (key, withTime) => ({
         this.mon = Number(values.month);
         this.render();
     },
-    commitParts() {
+    commitParts(input = this.parts) {
+        this.parts = { ...this.parts, ...input };
         this.dateError = '';
         const p = Object.fromEntries(Object.entries(this.parts).map(([key,value])=>[key,digits(value)]));
         if (!p.y && !p.m && !p.d && (!withTime || (!p.h && !p.i))) {

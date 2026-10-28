@@ -307,7 +307,16 @@ export function registerManagement(Alpine, helpers) {
         async save(preview = false) {
             if (this.busy || this.uploads > 0) return;
             const dates = this.$el.querySelectorAll(".admin-jalali-field");
-            if (Array.from(dates).some((field) => !Alpine.$data(field).commitParts())) {
+            const invalidDate = Array.from(dates).some((field) => {
+                const parts = Object.fromEntries(
+                    Array.from(field.querySelectorAll("input[data-date-part]")).map((input) => [
+                        input.dataset.datePart,
+                        input.value,
+                    ]),
+                );
+                return !Alpine.$data(field).commitParts(parts);
+            });
+            if (invalidDate) {
                 this.error = "تاریخ و ساعت را کامل و معتبر وارد کنید.";
                 return;
             }
