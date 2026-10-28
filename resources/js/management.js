@@ -113,6 +113,7 @@ export function registerManagement(Alpine, helpers) {
         english: clone(initial?.translations?.en || {}),
         englishBaseline: clone(initial?.translations?.en || {}),
         references: {},
+        referencesLoading: false,
         selectedMedia: {},
         uploads: 0,
         busy: false,
@@ -195,6 +196,7 @@ export function registerManagement(Alpine, helpers) {
             });
         },
         async loadReferences() {
+            this.referencesLoading = true;
             const sources = [
                 ...new Set(
                     config.fields
@@ -214,6 +216,7 @@ export function registerManagement(Alpine, helpers) {
                                     source +
                                     "?per_page=50&page=" +
                                     page,
+                                { background: true },
                             );
                             items.push(...r.data);
                             last = r.pagination?.last_page || 1;
@@ -224,7 +227,9 @@ export function registerManagement(Alpine, helpers) {
                         this.error = e.message;
                     }
                 }),
-            );
+            ).finally(() => {
+                this.referencesLoading = false;
+            });
         },
         choices(source, key) {
             let items = this.references[source] || [];
@@ -635,7 +640,7 @@ export function registerManagement(Alpine, helpers) {
         },
         async load() {
             try {
-                const r = await api("/api/v1/admin/notifications");
+                const r = await api("/api/v1/admin/notifications", { background: true });
                 this.items = r.data.items || r.data.notifications || [];
                 this.unread = r.data.unread_count || r.data.unread || 0;
             } catch {}

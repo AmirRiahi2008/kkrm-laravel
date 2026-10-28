@@ -71,20 +71,31 @@ export function publicPath(resource, item) {
 export async function api(path, options = {}) {
     if (!path.startsWith("/api/v1/") || /[\\\u0000-\u001f]/.test(path))
         throw new Error("مسیر درخواست معتبر نیست.");
-    Alpine.store("loading").count++;
+    const { background = false, signal, ...requestOptions } = options;
+    const controller = new AbortController();
+    const abort = () => controller.abort();
+    let timedOut = false;
+    if (signal?.aborted) abort();
+    else signal?.addEventListener("abort", abort, { once: true });
+    const timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+    }, 45000);
+    if (!background) Alpine.store("loading").count++;
     try {
-        const headers = new Headers(options.headers);
+        const headers = new Headers(requestOptions.headers);
         headers.set("Accept", "application/json");
         headers.set("X-Requested-With", "XMLHttpRequest");
         headers.set(
             "X-CSRF-TOKEN",
             document.querySelector('meta[name="csrf-token"]').content,
         );
-        if (options.body && !(options.body instanceof FormData))
+        if (requestOptions.body && !(requestOptions.body instanceof FormData))
             headers.set("Content-Type", "application/json");
         const response = await fetch(path, {
-            ...options,
+            ...requestOptions,
             headers,
+            signal: controller.signal,
             credentials: "same-origin",
             cache: "no-store",
         });
@@ -104,11 +115,18 @@ export async function api(path, options = {}) {
         if (data.success !== true || !("data" in data))
             throw new Error("پاسخ سرور معتبر نیست.");
         return data;
+    } catch (error) {
+        if (timedOut)
+            throw new Error("پاسخ سرور بیش از حد طول کشید. دوباره تلاش کنید.");
+        throw error;
     } finally {
-        Alpine.store("loading").count = Math.max(
-            0,
-            Alpine.store("loading").count - 1,
-        );
+        clearTimeout(timer);
+        signal?.removeEventListener("abort", abort);
+        if (!background)
+            Alpine.store("loading").count = Math.max(
+                0,
+                Alpine.store("loading").count - 1,
+            );
     }
 }
 export function notify(message, kind = "success") {
