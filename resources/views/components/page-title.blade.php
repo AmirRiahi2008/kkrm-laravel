@@ -1,1 +1,1 @@
-<div class="page-title"><a href="{{ P::url('/') }}">{{ P::t('صفحه اصلی') }}</a><span> / </span><span>{{ $label }}</span><h1>{{ $label }}</h1></div>
+<div class="page-title"><a href="{{ P::url('/') }}">{{ P::t('صفحه اصلی') }}</a><span> / </span><span>{{ P::t($label) }}</span><h1>{{ P::t($label) }}</h1>@if(!empty($description))<p>{{ P::t($description) }}</p>@endif</div>

@@ -56,12 +56,15 @@ final class PortalController
         }
         if ($path === 'search') {
             $query = trim((string) $request->query('q', ''));
-            $items = [];
+            $sections = [];
             if (mb_strlen($query) >= 2) {
-                $items = $this->queries->filter($this->queries->for('posts')->whereIn('type', ['news', 'announcement', 'resolution']), 'posts', ['q' => $query])->paginate(12)->withQueryString();
+                foreach (['news' => 'اخبار کانون', 'announcement' => 'اطلاعیه‌ها', 'resolution' => 'مصوبات'] as $type => $label) {
+                    $results = $this->queries->filter($this->queries->for('posts')->where('type', $type), 'posts', ['q' => $query]);
+                    $sections[] = ['type' => $type, 'label' => $label, 'total' => (clone $results)->count(), 'items' => $results->limit(6)->get()];
+                }
             }
 
-            return view('site.archive', ['resource' => 'news', 'label' => P::t('جستجو در سایت'), 'items' => $items, 'search' => $query]);
+            return view('site.search', compact('sections', 'query'));
         }
         if (in_array($path, ['fees', 'tariffs', 'tariffs/calculator'], true)) {
             return view('site.fees', ['tariffs' => $this->queries->for('tariffs')->orderByDesc('effective_from')->get()]);
@@ -104,13 +107,23 @@ final class PortalController
             $related = [];
             $relatedResource = '';
             $relatedLabel = '';
+            $relatedQuery = '';
             $relations = ['expert-groups' => ['disciplines', 'expert_group_id', 'رشته‌های این گروه'], 'disciplines' => ['qualifications', 'discipline_id', 'صلاحیت‌های این رشته'], 'board-terms' => ['board-members', 'board_term_id', 'اعضای این دوره']];
             if (isset($relations[$resource])) {
                 [$relatedResource,$field,$relatedLabel] = $relations[$resource];
                 $related = $this->queries->for($relatedResource)->where($field, $model->id)->get()->map(fn ($m) => $this->present->one($m))->all();
+                $relatedQuery = $field.'='.$model->id;
+            }
+            if (in_array($resource, ['categories', 'tags'], true)) {
+                $relatedResource = 'news';
+                $relatedLabel = 'مطالب مرتبط';
+                $filter = $resource === 'tags' ? 'tag' : 'category';
+                $relatedQuery = $filter.'='.rawurlencode($model->slug);
+                $related = $this->queries->filter($this->queries->for('posts'), 'posts', [$filter => $model->slug])
+                    ->limit(50)->get()->map(fn ($entry) => $this->present->one($entry))->all();
             }
 
-            return view('site.detail', compact('item', 'resource', 'related', 'relatedResource', 'relatedLabel'));
+            return view('site.detail', compact('item', 'resource', 'related', 'relatedResource', 'relatedLabel', 'relatedQuery'));
         }
         $filters = $request->validate((new IndexRequest)->rules());
         if ($resource === 'articles') {
@@ -124,7 +137,14 @@ final class PortalController
         if ($resource === 'experts') {
             $directory = app()->call([app(ExpertDirectoryController::class), 'filters'])->getData(true)['data'];
         }
+        $filterOptions = [];
+        if ($resource === 'board-members') {
+            $filterOptions['terms'] = $this->queries->for('board-terms')->get();
+        }
+        if ($resource === 'qualifications') {
+            $filterOptions['disciplines'] = $this->queries->for('disciplines')->get();
+        }
 
-        return view('site.archive', ['resource' => $resource, 'label' => P::t($config['label']), 'items' => $items, 'directory' => $directory]);
+        return view('site.archive', ['resource' => $resource, 'label' => P::t($config['label']), 'items' => $items, 'directory' => $directory, 'filterOptions' => $filterOptions]);
     }
 }

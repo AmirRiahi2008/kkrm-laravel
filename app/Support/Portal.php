@@ -85,6 +85,27 @@ final class Portal
         return $format->format($value);
     }
 
+    public static function number(mixed $value): string
+    {
+        return (new \NumberFormatter(self::locale() === 'fa' ? 'fa_IR' : 'en_US', \NumberFormatter::DECIMAL))->format($value ?? 0);
+    }
+
+    public static function datePart(string $pattern, mixed $date = null): string
+    {
+        $format = new IntlDateFormatter(self::locale() === 'fa' ? 'fa_IR@calendar=persian' : 'en_US', IntlDateFormatter::NONE, IntlDateFormatter::NONE, 'Asia/Tehran', self::locale() === 'fa' ? IntlDateFormatter::TRADITIONAL : IntlDateFormatter::GREGORIAN, $pattern);
+
+        return $format->format(Carbon::parse($date ?? now()));
+    }
+
+    public static function adminDate(mixed $date, bool $weekday = false): string
+    {
+        if (! $date) {
+            return '—';
+        }
+
+        return self::datePart($weekday ? 'yyyy MMMM dd, EEEE ساعت HH:mm' : 'yyyy/MM/dd, HH:mm', $date);
+    }
+
     public static function active(?string $url): bool
     {
         if (! $url || ! str_starts_with($url, '/')) {

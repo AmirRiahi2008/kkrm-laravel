@@ -26,19 +26,22 @@ export function registerManagement(Alpine, helpers) {
         page: 1,
         q: "",
         status: "",
+        type: "",
         trash: false,
         error: "",
         loading: false,
         audit: "",
         title,
         formatDate,
+        formatNumber,
+        pageNumbers() { return Array.from({length:Math.max(0,Math.min(this.pagination.last_page||1,this.page+2)-Math.max(1,this.page-2)+1)},(_,i)=>Math.max(1,this.page-2)+i); },
+        statusLabel(item) { return ({draft:"پیش‌نویس",review:"در انتظار بررسی",published:"منتشرشده",archived:"بایگانی"})[item.status] || item.type || item.role || (item.is_active===undefined?"—":item.is_active?"فعال":"غیرفعال"); },
         publicPath: (item) => publicPath(resource, item),
-        placement: (item) =>
-            (item.location || "") +
-            " · " +
-            (item.parent_id ? "زیرمنو" : "لینک اصلی"),
+        placement(item) { return item.location === "header" ? ({main:"ناوبری اصلی",both:"ناوبری اصلی و مگامنو",mega:"داخل مگامنو"}[item.display_mode]||"داخل مگامنو") : ({footer:"پایین سایت (فوتر)",mobile:"منوی اختصاصی موبایل",quick:"دسترسی سریع"}[item.location]||""); },
         async init() {
             const p = new URLSearchParams(location.search);
+            this.page = Math.max(1,Number(p.get("page"))||1);
+            this.type = p.get("type") || "";
             this.q = p.get("q") || "";
             this.status = p.get("status") || "";
             this.trash = p.get("trash") === "1";
@@ -53,11 +56,13 @@ export function registerManagement(Alpine, helpers) {
                     per_page: "15",
                     ...(this.q ? { q: this.q } : {}),
                     ...(this.status ? { status: this.status } : {}),
+                    ...(this.type ? { type: this.type } : {}),
                     ...(this.trash ? { trash: "1" } : {}),
                 });
                 const r = await api("/api/v1/admin/" + resource + "?" + q);
                 this.items = r.data;
                 this.pagination = r.pagination || {};
+                history.replaceState(null,"",location.pathname+"?"+q);
             } catch (e) {
                 this.error = e.message;
             } finally {
@@ -94,10 +99,15 @@ export function registerManagement(Alpine, helpers) {
             this.$refs.audit.showModal();
         },
     }));
-    Alpine.data("resourceForm", (resource, config, initial) => ({
+    Alpine.data("resourceForm", (resource, config, initial, role = "relations_manager") => ({
         resource,
         config,
         record: initial,
+        role,
+        previewIntent: false,
+        automaticPath: !initial,
+        lastAutoSlug: "",
+        albumChoice: "",
         values: {},
         baseline: {},
         english: clone(initial?.translations?.en || {}),
@@ -114,6 +124,14 @@ export function registerManagement(Alpine, helpers) {
         })),
         title,
         mediaUrl,
+        formatNumber,
+        pagePath() { return this.record ? publicPath("pages",this.record) : ""; },
+        menuDestination() { return this.values.location==="header" ? (["main","both"].includes(this.values.display_mode)?this.values.display_mode:"mega") : this.values.location||"main"; },
+        destinationBlocked(key) { const location=["main","mega","both"].includes(key)?"header":key;return !!this.record&&(this.references["menu-items"]||[]).some(item=>Number(item.parent_id)===Number(this.record.id))&&(location!==this.values.location||key==="main"); },
+        chooseDestination(key) { const location=["main","mega","both"].includes(key)?"header":key;const same=this.values.location===location;this.values.parent_id=same&&!["main","both","footer"].includes(key)?this.values.parent_id||null:null;this.values.location=location;this.values.display_mode=["main","both"].includes(key)?key:"mega"; },
+        menuParentLabel(entry) { const parts=[title(entry)];const seen=new Set([Number(entry.id)]);let parent=entry.parent_id;while(parent&&!seen.has(Number(parent))) { seen.add(Number(parent));const found=(this.references["menu-items"]||[]).find(item=>Number(item.id)===Number(parent));if(!found)break;parts.unshift(title(found));parent=found.parent_id; } return parts.join(" ← "); },
+        menuPreview() { const name={main:"ناوبری اصلی",mega:"مگامنو بخش‌های کانون",both:"ناوبری اصلی و مگامنو",footer:"پایین سایت (فوتر)",mobile:"منوی موبایل",quick:"دسترسی سریع"}[this.menuDestination()]||"";const parent=(this.references["menu-items"]||[]).find(item=>Number(item.id)===Number(this.values.parent_id));return [name,parent?this.menuParentLabel(parent):"",this.values.title||"لینک شما"].filter(Boolean).join(" ← "); },
+        addAlbumChoice() { const item=(this.references.media||[]).find(item=>String(item.id)===String(this.albumChoice));if(item&&!this.albumItems.some(entry=>entry.media.id===item.id))this.albumItems.push({media:item,caption:"",caption_en:"",key:crypto.randomUUID()});this.albumChoice=""; },
         init() {
             for (const field of config.fields) {
                 let value = initial?.[field.key];
@@ -162,13 +180,14 @@ export function registerManagement(Alpine, helpers) {
                 )
                     this.values.type = type;
             }
+            this.lastAutoSlug=this.values.slug||"";
             this.baseline = clone(this.values);
-            this.loadReferences();
+            this.loadReferences().then(()=>{if(!initial&&resource==="menu-items") { const id=new URLSearchParams(location.search).get("page_id");if(id&&(this.references.pages||[]).some(item=>String(item.id)===id)){this.values.page_id=id;this.choosePage();this.baseline=clone(this.values);} } });
             window.addEventListener("beforeunload", (event) => {
                 if (
                     !this.busy &&
-                    JSON.stringify(this.values) !==
-                        JSON.stringify(this.baseline)
+                    (JSON.stringify(this.values) !==
+                        JSON.stringify(this.baseline) || JSON.stringify(this.english)!==JSON.stringify(this.englishBaseline))
                 ) {
                     event.preventDefault();
                     event.returnValue = "";
@@ -180,7 +199,7 @@ export function registerManagement(Alpine, helpers) {
                 ...new Set(
                     config.fields
                         .filter((f) => f.source || f.type === "media")
-                        .map((f) => f.source || "media"),
+                        .map((f) => f.source || "media").concat(resource==="albums"?["media"]:[]),
                 ),
             ];
             await Promise.all(
@@ -191,7 +210,7 @@ export function registerManagement(Alpine, helpers) {
                             last = 1;
                         do {
                             const r = await api(
-                                "/api/v1/admin/" +
+                                (role==="editor"&&source!=="media"?"/api/v1/":"/api/v1/admin/") +
                                     source +
                                     "?per_page=50&page=" +
                                     page,
@@ -235,32 +254,14 @@ export function registerManagement(Alpine, helpers) {
             return items;
         },
         changed(key) {
-            if (
-                !this.record &&
-                ["title", "name"].includes(key) &&
-                "slug" in this.values
-            ) {
-                const slug = (s) =>
-                    String(s || "")
-                        .normalize("NFKC")
-                        .trim()
-                        .toLowerCase()
-                        .replace(/[^\p{L}\p{N}]+/gu, "-")
-                        .replace(/^-|-$/g, "")
-                        .slice(0, 180);
-                if (
-                    !this.values.slug ||
-                    this.values.slug === slug(this.baseline[key])
-                )
-                    this.values.slug = slug(this.values[key]);
+            if (!this.record && ['title','name'].includes(key) && 'slug' in this.values) {
+                const slug = String(this.values[key]||'').normalize('NFKC').trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'').slice(0,180);
+                if (!this.values.slug || this.values.slug===this.lastAutoSlug) {
+                    this.values.slug=slug;
+                    this.lastAutoSlug=slug;
+                }
+                if (resource==='pages'&&this.automaticPath) this.values.path='/'+slug;
             }
-            if (
-                !this.record &&
-                resource === "pages" &&
-                key === "title" &&
-                !this.values.path
-            )
-                this.values.path = "/" + this.values.slug;
         },
         choosePage() {
             const page = (this.references.pages || []).find(
@@ -300,6 +301,7 @@ export function registerManagement(Alpine, helpers) {
         },
         async save(preview = false) {
             if (this.busy || this.uploads > 0) return;
+            if(this.$el.querySelector(".admin-jalali-field[data-invalid]")) {this.error="تاریخ و ساعت را کامل و معتبر وارد کنید.";return;}
             this.busy = true;
             this.errors = {};
             this.error = "";
@@ -473,6 +475,7 @@ export function registerManagement(Alpine, helpers) {
         busy: false,
         error: "",
         mediaUrl,
+        formatNumber,
         async init() {
             await this.load();
         },
@@ -525,6 +528,11 @@ export function registerManagement(Alpine, helpers) {
     }));
     Alpine.data("settingsForm", () => ({
         values: {},
+        errors: {},
+        references: {media:[]},
+        selectedMedia: {},
+        uploads: 0,
+        mediaUrl,
         baseline: {},
         busy: false,
         error: "",
@@ -533,11 +541,21 @@ export function registerManagement(Alpine, helpers) {
                 const r = await api("/api/v1/admin/settings");
                 this.values = r.data;
                 this.baseline = clone(r.data);
+                let page=1,last=1,pool=[];
+                do {const media=await api("/api/v1/admin/media?per_page=50&page="+page);pool.push(...media.data);last=media.pagination?.last_page||1;page++;} while(page<=last);
+                this.references.media=pool;
+                for(const key of ["logo_media_id","favicon_media_id"]) this.selectedMedia[key]=pool.find(item=>String(item.id)===String(this.values[key]))||null;
             } catch (e) {
                 this.error = e.message;
             }
         },
+        async uploadField(event,key) {
+            const file=event.target.files?.[0];event.target.value="";if(!file||this.uploads)return;this.uploads++;
+            try {const body=new FormData();body.set("file",file);body.set("alt",file.name);const {data}=await api("/api/v1/admin/media",{method:"POST",body});this.values[key]=data.id;this.selectedMedia[key]=data;this.references.media.unshift(data);} catch(error) {this.error=error.message;} finally {this.uploads--;}
+        },
         async save() {
+            if(this.busy||this.uploads)return;
+            this.error="";this.errors={};
             this.busy = true;
             try {
                 const values = Object.fromEntries(
@@ -560,6 +578,7 @@ export function registerManagement(Alpine, helpers) {
                 this.baseline = clone(this.values);
                 notify("تنظیمات ذخیره شد.");
             } catch (e) {
+                this.errors=e.errors||{};
                 this.error =
                     Object.values(e.errors || {})
                         .flat()
@@ -600,6 +619,8 @@ export function registerManagement(Alpine, helpers) {
     }));
     Alpine.data("notifications", () => ({
         open: false,
+        formatNumber,
+        formatDate,
         items: [],
         unread: 0,
         timer: null,
@@ -643,6 +664,7 @@ export function registerManagement(Alpine, helpers) {
     Alpine.data("revisions", (id) => ({
         items: [],
         formatDate,
+        init() { this.load(); },
         async load() {
             try {
                 this.items = (

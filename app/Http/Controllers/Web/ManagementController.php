@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\SiteController;
 use App\Models\AuditLog;
 use App\Models\ContactMessage;
 use App\Models\Page;
@@ -29,6 +28,9 @@ final class ManagementController
     public function resource(Request $request, string $resource, ?string $action = null)
     {
         abort_unless(P::can($resource), 403);
+        if ($resource === 'slides') {
+            return redirect('/admin/posts');
+        }
         if (in_array($resource, ['media', 'settings', 'security'], true)) {
             return view('admin.'.$resource);
         }
@@ -51,7 +53,7 @@ final class ManagementController
         }
         abort_if(($action === 'new' && ($config['noCreate'] ?? false)) || ($config['readOnly'] ?? false), 403);
 
-        return view('admin.form', compact('resource', 'config', 'initial'));
+        return view($resource === 'pages' ? 'admin.page-builder' : 'admin.form', compact('resource', 'config', 'initial'));
     }
 
     private function authorizePost(Post $post): void
@@ -63,9 +65,6 @@ final class ManagementController
     {
         abort_unless(P::can('pages'), 403);
         $item = app(ContentPresenter::class)->one(Page::findOrFail($id), true);
-        $site = app(SiteController::class);
-        $present = app(ContentPresenter::class);
-
-        return view('site.detail', ['item' => $item, 'resource' => 'pages', 'preview' => true, 'settings' => $site->settings($present)->getData(true)['data'], 'navigation' => $site->navigation($present)->getData(true)['data']]);
+        return view('admin.page-preview', compact('item'));
     }
 }
