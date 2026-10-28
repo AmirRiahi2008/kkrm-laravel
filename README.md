@@ -4,45 +4,53 @@
 
 ## پیش‌نیاز
 
-PHP 8.3 یا جدیدتر مطابق composer.lock، Composer 2، MySQL 8 یا MariaDB سازگار و افزونه‌های PDO MySQL، intl، mbstring، GD، fileinfo، DOM/XML، curl و zip. Node.js 22 برای ساخت دارایی‌ها توصیه می‌شود؛ در سرور Node دائماً اجرا نمی‌شود.
+PHP 8.3 یا جدیدتر مطابق composer.lock، Composer 2، MySQL 8 و افزونه‌های PDO MySQL، intl، mbstring، GD، fileinfo، DOM/XML، curl و zip. برای ساخت دارایی‌ها Node.js 22.12 یا جدیدتر سازگار با Vite لازم است؛ Node.js 22 یا 24 توصیه می‌شود. در سرور Node دائماً اجرا نمی‌شود.
 
 ## نصب محلی
 
+راهنمای کامل کلون، تنظیم `.env`، بازیابی SQL، انتقال عکس‌ها و رفع خطاها در [docs/LOCAL.fa.md](docs/LOCAL.fa.md) است. سایت و پنل مدیریت هر دو روی `http://127.0.0.1:8000` اجرا می‌شوند؛ اجرای Next.js یا سرور جداگانهٔ فرانت لازم نیست.
+
 ```bash
+git clone https://github.com/AmirRiahi2008/kkrm-laravel.git
+cd kkrm-laravel
 mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
-composer install
 cp .env.example .env
+composer install
 php artisan key:generate
 ```
 
-دیتابیس MySQL به نام `kkr` بسازید و اطلاعات `DB_*` را در `.env` وارد کنید. `APP_URL` و `FRONTEND_URL` را هر دو `http://127.0.0.1:8000` قرار دهید.
+دیتابیس MySQL به نام `kkrm` بسازید و نام کاربری، رمز و پورت واقعی MySQL لوکال را در `.env` وارد کنید. `APP_URL` و `FRONTEND_URL` هر دو `http://127.0.0.1:8000` هستند. `PUBLIC_SITE_URL` و `ASSET_URL` برای لوکال خالی می‌مانند.
+
+اگر بکاپ سایت فعلی را دارید، ابتدا **کل SQL را در دیتابیس خالی import کنید** و سپس دستورهای زیر را اجرا کنید. قبل از import، `migrate` اجرا نکنید. `db:seed`، `migrate:fresh` و `migrate:refresh` برای این مسیر نصب لازم نیستند. فایل‌های رسانهٔ هاست را نیز مطابق راهنمای محلی جداگانه کپی کنید.
 
 ```bash
+php artisan optimize:clear
 php artisan migrate
-php artisan db:seed --class=SiteStructureSeeder
-php artisan app:create-admin admin@example.com
+php artisan storage:link
 npm ci
+rm -f public/hot
 npm run build
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-برای دادهٔ نمونه فقط در محیط local می‌توانید `php artisan db:seed` اجرا کنید؛ این کار حساب‌های نمایشی با رمز شناخته‌شده می‌سازد و برای production مناسب نیست.
+حساب‌های مدیریت موجود در بکاپ با همان رمز قبلی قابل استفاده‌اند. فقط برای نصب کاملاً جدید و بدون بکاپ، پس از `migrate` می‌توانید `php artisan db:seed --class=SiteStructureSeeder` و `php artisan app:create-admin admin@example.com` اجرا کنید؛ فرمان ساخت مدیر رمز را مخفیانه دریافت می‌کند. برای دادهٔ نمونه در دیتابیس آزمایشی جداگانه می‌توان `php artisan db:seed` اجرا کرد؛ این کار حساب‌های نمایشی با رمز شناخته‌شده می‌سازد و برای production یا بکاپ واقعی مناسب نیست.
 
 ورود مدیریت: `/admin/login`، سایت فارسی: `/`، انگلیسی: `/en`، دانلود و نصب PWA: `/download`، تعرفه: `/tariffs/calculator`، جستجوی کارشناس: `/experts`.
 
 ## اجرای استایل‌ها و JavaScript
 
-برای استفاده از خروجی آماده، ابتدا پردازش `npm run dev` را متوقف کنید و دستورهای زیر را از ریشهٔ پروژه اجرا کنید:
+خروجی `public/build` در Git ثبت نمی‌شود و پس از کلون باید ساخته شود. برای استفاده از خروجی ساخته‌شده، ابتدا پردازش `npm run dev` را متوقف کنید و دستورهای زیر را از ریشهٔ پروژه اجرا کنید:
 
 ```bash
 npm ci
+rm -f public/hot
 npm run build
 php artisan config:clear
 php artisan view:clear
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-سایت را در `http://127.0.0.1:8000` باز کنید. ریشهٔ پروژه یا فایل Blade را مستقیم در مرورگر باز نکنید. `APP_URL` و `FRONTEND_URL` در `.env` نیز باید همین نشانی باشند و `ASSET_URL` را خالی بگذارید. `public/build/manifest.json` و تمام فایل‌های `public/build/assets` باید با هم منتقل شوند. فایل `public/hot` متعلق به Vite در حال توسعه است و نباید همراه خروجی نهایی منتقل شود؛ `npm run build` آن را حذف می‌کند.
+سایت را در `http://127.0.0.1:8000` باز کنید. ریشهٔ پروژه یا فایل Blade را مستقیم در مرورگر باز نکنید. `APP_URL` و `FRONTEND_URL` در `.env` نیز باید همین نشانی باشند و `ASSET_URL` را خالی بگذارید. `public/build/manifest.json` و تمام فایل‌های `public/build/assets` باید با هم منتقل شوند. فایل `public/hot` متعلق به Vite در حال توسعه است و نباید همراه خروجی نهایی منتقل شود؛ اگر پس از توقف Vite باقی مانده است، پیش از build با دستور بالا حذفش کنید.
 
 برای ویرایش زنده، `php artisan serve` را در یک ترمینال و `npm run dev` را در ترمینال دیگری اجرا کنید. هر دو پردازش باید فعال بمانند. دسترسی فایل‌ها و اتصال Vite در تنظیمات امنیتی فقط برای `APP_ENV=local` مجاز می‌شود؛ در production از `npm run build` استفاده کنید.
 
@@ -51,7 +59,7 @@ php artisan serve --host=127.0.0.1 --port=8000
 ۱. از دیتابیس فعلی و تمام فایل‌های رسانه نسخهٔ پشتیبان بگیرید.
 ۲. دیتابیس فعلی را به دیتابیس مقصد import کنید؛ جداول با backend قبلی سازگارند.
 ۳. پوشهٔ رسانه در `storage/app` قبلی را در محل متناظر این پروژه کپی کنید. فایل ZIP حاوی عکس‌های آپلودشدهٔ سایت فعلی و دیتابیس واقعی آن نیست.
-۴. کلید `APP_KEY` قبلی را نگه دارید؛ کلید جدید برای دیتابیس انتقال‌یافته تولید نکنید.
+۴. هنگام جابه‌جایی خود سایت عملیاتی، کلید `APP_KEY` قبلی را نگه دارید تا نشست‌ها و داده‌های رمزگذاری‌شده قابل استفاده بمانند. برای نسخهٔ مستقل لوکال این پروژه، مطابق راهنمای محلی کلید تازه بسازید؛ رمزهای هش‌شدهٔ کاربران به APP_KEY وابسته نیستند. نشست‌ها و jobهای رمزگذاری‌شدهٔ قدیمی با کلید تازه قابل استفاده نیستند؛ لوکال از کوکی و پیشوند کش جدا و صف `sync` استفاده می‌کند و نباید worker صف عملیاتی را اجرا کند.
 ۵. `.env.production.example` را مبنای تنظیمات سرور قرار دهید. دامنه را در `APP_URL`، `FRONTEND_URL`، `CORS_ALLOWED_ORIGINS` و `SANCTUM_STATEFUL_DOMAINS` تنظیم کنید. مقدار آخر فقط hostname است.
 ۶. `php artisan migrate --force` اجرا کنید؛ از `migrate:fresh` و DemoSeeder روی دادهٔ واقعی استفاده نکنید.
 
@@ -67,7 +75,7 @@ php artisan optimize
 php artisan queue:restart
 ```
 
-فایل‌های `public/build` آمادهٔ استفاده‌اند. با تغییر JS/CSS، `npm ci && npm run build` را پیش از انتقال اجرا کنید. وب‌سرور باید فقط پوشهٔ `public` را سرو کند؛ ریشهٔ پروژه و فایل `.env` نباید در دسترس وب قرار گیرند. نمونهٔ Nginx در `deploy/nginx.conf` است؛ مسیر پروژه، دامنه، گواهی و socket واقعی PHP-FPM را تنظیم کنید. `storage` و `bootstrap/cache` باید برای کاربر PHP قابل نوشتن باشند؛ دسترسی 777 ندهید.
+پس از کلون و با هر تغییر JS/CSS، `npm ci` و `npm run build` را پیش از انتقال اجرا کنید و خروجی `public/build` را همراه پروژه منتقل کنید. وب‌سرور باید فقط پوشهٔ `public` را سرو کند؛ ریشهٔ پروژه و فایل `.env` نباید در دسترس وب قرار گیرند. نمونهٔ Nginx در `deploy/nginx.conf` است؛ مسیر پروژه، دامنه، گواهی و socket واقعی PHP-FPM را تنظیم کنید. `storage` و `bootstrap/cache` باید برای کاربر PHP قابل نوشتن باشند؛ دسترسی 777 ندهید.
 
 برای صف، نمونهٔ Supervisor در `deploy/queue-worker.conf` موجود است. Scheduler:
 
@@ -109,4 +117,4 @@ php artisan media:audit --verify
 
 این فرمان فقط می‌خواند و فایل‌ها و دیتابیس را تغییر نمی‌دهد. برای اصلاح محل فایل‌ها و توضیح `--source-root`، [راهنمای رسانه](docs/MEDIA.fa.md) را ببینید. در روش فعلی، فایل‌ها در storage همان هاست لاراول باقی می‌مانند و به سرویس دیگری منتقل نمی‌شوند.
 
-قالب‌های Blade باید در Git ثبت باشند؛ `resources/views/.gitignore` نباید شامل `*` باشد. نسخهٔ اصلاح‌شده ۳۶ فایل قالب را بازیابی می‌کند. فایل‌های خصوصی `storage` را در ریپازیتوری عمومی commit نکنید.
+قالب‌های Blade باید در Git ثبت باشند؛ `resources/views/.gitignore` نباید شامل `*` باشد. فایل‌های خصوصی `storage` را در ریپازیتوری عمومی commit نکنید.
