@@ -174,11 +174,22 @@ Alpine.data("appShell", () => ({
             () => (Alpine.store("loading").count = 0),
         );
         document.addEventListener("submit", (event) => {
+            const form = event.target;
+            if (!(form instanceof HTMLFormElement)) return;
+            const handledByAlpine = form.getAttributeNames().some(
+                (name) =>
+                    /^(?:@|x-on:)submit(?:\.|$)/.test(name) &&
+                    name.split(".").includes("prevent"),
+            );
             if (
-                !event.defaultPrevented &&
-                event.target.method?.toLowerCase() === "get"
-            )
-                Alpine.store("loading").count++;
+                event.defaultPrevented ||
+                form.method.toLowerCase() !== "get" ||
+                handledByAlpine
+            ) return;
+            queueMicrotask(() => {
+                if (!event.defaultPrevented)
+                    Alpine.store("loading").count++;
+            });
         });
     },
     async logout() {
